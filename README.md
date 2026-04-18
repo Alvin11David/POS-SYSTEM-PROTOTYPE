@@ -1,4 +1,4 @@
-# Jambo POS Prototype
+# POS System Prototype
 
 ## Overview
 
