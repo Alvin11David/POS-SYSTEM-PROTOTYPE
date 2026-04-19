@@ -35,46 +35,55 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full grid lg:grid-cols-2 bg-background">
+    <div className="min-h-screen h-full w-full grid lg:grid-cols-2 bg-background">
       {/* Left: brand panel */}
-      <div className="relative hidden lg:flex flex-col justify-between p-10 overflow-hidden gradient-primary text-primary-foreground">
-        <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
+      <div className="relative hidden lg:block h-full min-h-screen w-full overflow-hidden text-primary-foreground">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <iframe
+            src="https://my.spline.design/thecastle3diconcopycopy-rOqj6yCCmCipaSBTx5nk1yW3-JPB/"
+            title="Castle 3D animation"
+            className="absolute inset-0 block h-[112%] w-[112%] -translate-x-[6%] -translate-y-[6%]"
+            style={{ border: 0 }}
+            aria-hidden="true"
+          />
+        </div>
 
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-            <Sparkles className="h-5 w-5" />
+        <div className="relative z-10 flex h-full min-h-screen flex-col justify-between p-10">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <span className="text-lg font-bold tracking-tight">Jambo POS</span>
           </div>
-          <span className="text-lg font-bold tracking-tight">Jambo POS</span>
-        </div>
 
-        <div className="relative space-y-6">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight">
-            Run your shop
-            <br />
-            with delight.
-          </h1>
-          <p className="text-base text-primary-foreground/80 max-w-sm">
-            A modern point-of-sale built for speed. Sell faster, track everything, and grow your
-            store with confidence.
+          <div className="space-y-6">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight">
+              Run your shop
+              <br />
+              with delight.
+            </h1>
+            <p className="text-base text-primary-foreground/80 max-w-sm">
+              A modern point-of-sale built for speed. Sell faster, track
+              everything, and grow your store with confidence.
+            </p>
+            <ul className="space-y-3 text-sm">
+              {[
+                "Lightning-fast checkout",
+                "Roles for admin, manager & cashier",
+                "Real-time sales insights",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="text-xs text-primary-foreground/70">
+            © {new Date().getFullYear()} Jambo POS · Crafted for retail.
           </p>
-          <ul className="space-y-3 text-sm">
-            {[
-              "Lightning-fast checkout",
-              "Roles for admin, manager & cashier",
-              "Real-time sales insights",
-            ].map((f) => (
-              <li key={f} className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />
-                {f}
-              </li>
-            ))}
-          </ul>
         </div>
-
-        <p className="relative text-xs text-primary-foreground/70">
-          © {new Date().getFullYear()} Jambo POS · Crafted for retail.
-        </p>
       </div>
 
       {/* Right: form */}
@@ -88,7 +97,9 @@ export default function Login() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight">Sign in to your store</h2>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Sign in to your store
+            </h2>
             <p className="text-sm text-muted-foreground">
               Enter the username and password your admin gave you.
             </p>
@@ -132,24 +143,36 @@ export default function Login() {
                   className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-base"
                   aria-label={showPwd ? "Hide password" : "Show password"}
                 >
-                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPwd ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
 
-            <Button type="submit" className="w-full shadow-glow" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full shadow-glow"
+              disabled={loading}
+            >
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
           <div className="rounded-xl border border-border bg-accent/40 p-4 text-xs">
-            <p className="font-semibold text-accent-foreground">Default admin</p>
+            <p className="font-semibold text-accent-foreground">
+              Default admin
+            </p>
             <p className="mt-1 text-muted-foreground">
-              Username: <span className="font-mono text-foreground">admin</span> · Password:{" "}
+              Username: <span className="font-mono text-foreground">admin</span>{" "}
+              · Password:{" "}
               <span className="font-mono text-foreground">admin123</span>
             </p>
             <p className="mt-2 text-muted-foreground">
-              Change the password after sign-in from <span className="font-medium">Staff</span>.
+              Change the password after sign-in from{" "}
+              <span className="font-medium">Staff</span>.
             </p>
           </div>
         </div>
