@@ -62,7 +62,7 @@ export default function SalesReport() {
     const sum = filtered.reduce((a, s) => a + s.total, 0);
     const items = filtered.reduce(
       (a, s) => a + s.items.reduce((b, i) => b + i.quantity, 0),
-      0
+      0,
     );
     return { sum, items };
   }, [filtered]);
@@ -107,7 +107,11 @@ export default function SalesReport() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => window.print()} className="gap-2">
+          <Button
+            variant="outline"
+            onClick={() => window.print()}
+            className="gap-2"
+          >
             <Printer className="h-4 w-4" /> Print
           </Button>
           <Button onClick={exportCsv} className="gap-2 shadow-glow">
@@ -120,11 +124,21 @@ export default function SalesReport() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
           <div className="space-y-1.5">
             <Label htmlFor="from">Date from</Label>
-            <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            <Input
+              id="from"
+              type="date"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="to">To</Label>
-            <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+            <Input
+              id="to"
+              type="date"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label>Select POS</Label>
@@ -149,7 +163,9 @@ export default function SalesReport() {
               <SelectContent>
                 <SelectItem value="All">All cashiers</SelectItem>
                 {users.map((u) => (
-                  <SelectItem key={u.id} value={u.username}>{u.fullName}</SelectItem>
+                  <SelectItem key={u.id} value={u.username}>
+                    {u.fullName}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -181,7 +197,9 @@ export default function SalesReport() {
         </Card>
         <Card className="p-4 shadow-soft">
           <p className="text-xs text-muted-foreground">Total revenue</p>
-          <p className="text-2xl font-bold mt-1">{formatCurrency(totals.sum)}</p>
+          <p className="text-2xl font-bold mt-1">
+            {formatCurrency(totals.sum)}
+          </p>
         </Card>
       </div>
 
@@ -215,16 +233,24 @@ export default function SalesReport() {
                     <TableCell className="font-medium">
                       #{s.id.slice(0, 8).toUpperCase()}
                     </TableCell>
-                    <TableCell>{new Date(s.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>
+                      {new Date(s.createdAt).toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {s.items.reduce((a, i) => a + i.quantity, 0)} item(s)
                     </TableCell>
-                    <TableCell className="text-right">{formatCurrency(s.total)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(s.total)}
+                    </TableCell>
                     <TableCell className="text-right font-semibold">
                       {formatCurrency(s.total)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button size="sm" variant="outline" onClick={() => setSelected(s)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelected(s)}
+                      >
                         View
                       </Button>
                     </TableCell>

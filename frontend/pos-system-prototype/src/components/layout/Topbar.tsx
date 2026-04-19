@@ -1,5 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { Bell, BookOpen, KeyRound, LogOut, Search, Settings, ShoppingCart } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  KeyRound,
+  LogOut,
+  Search,
+  Settings,
+  ShoppingCart,
+} from "lucide-react";
 import { ROLE_LABEL, useAuth } from "@/store/authStore";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
@@ -20,12 +28,14 @@ import {
 } from "@/components/ui/popover";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { usePos } from "@/store/posStore";
+import { useCurrency } from "@/store/currencyStore";
 import { toast } from "sonner";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 
 export function Topbar() {
   const navigate = useNavigate();
   const { products, sales } = usePos();
+  const { formatCurrency } = useCurrency();
   const { currentUser, logout } = useAuth();
   const initials = (currentUser?.fullName || currentUser?.username || "U")
     .split(" ")
@@ -54,12 +64,14 @@ export function Topbar() {
     if (!query.trim()) return { products: [], sales: [] };
     const q = query.toLowerCase();
     return {
-      products: products.filter((p) => p.name.toLowerCase().includes(q)).slice(0, 5),
+      products: products
+        .filter((p) => p.name.toLowerCase().includes(q))
+        .slice(0, 5),
       sales: sales
         .filter(
           (s) =>
             s.id.toLowerCase().includes(q) ||
-            s.items.some((i) => i.name.toLowerCase().includes(q))
+            s.items.some((i) => i.name.toLowerCase().includes(q)),
         )
         .slice(0, 4),
     };
@@ -70,10 +82,13 @@ export function Topbar() {
       sales.slice(0, 4).map((s) => ({
         id: s.id,
         title: `Sale #${s.id.slice(0, 6).toUpperCase()}`,
-        body: `$${s.total.toFixed(2)} · ${s.items.reduce((a, i) => a + i.quantity, 0)} items`,
-        time: new Date(s.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        body: `${formatCurrency(s.total)} · ${s.items.reduce((a, i) => a + i.quantity, 0)} items`,
+        time: new Date(s.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       })),
-    [sales]
+    [sales, formatCurrency],
   );
 
   return (
@@ -107,7 +122,9 @@ export function Topbar() {
         >
           <div className="max-h-80 overflow-y-auto p-2">
             {results.products.length === 0 && results.sales.length === 0 ? (
-              <p className="px-3 py-6 text-center text-sm text-muted-foreground">No results found</p>
+              <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                No results found
+              </p>
             ) : (
               <>
                 {results.products.length > 0 && (
@@ -127,7 +144,9 @@ export function Topbar() {
                       >
                         <span className="text-lg">{p.emoji ?? "📦"}</span>
                         <span className="flex-1 text-sm">{p.name}</span>
-                        <span className="text-xs font-semibold text-primary">${p.price.toFixed(2)}</span>
+                        <span className="text-xs font-semibold text-primary">
+                          {formatCurrency(p.price)}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -148,8 +167,12 @@ export function Topbar() {
                         }}
                       >
                         <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                        <span className="flex-1 text-sm">#{s.id.slice(0, 6).toUpperCase()}</span>
-                        <span className="text-xs font-semibold">${s.total.toFixed(2)}</span>
+                        <span className="flex-1 text-sm">
+                          #{s.id.slice(0, 6).toUpperCase()}
+                        </span>
+                        <span className="text-xs font-semibold">
+                          {formatCurrency(s.total)}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -163,7 +186,12 @@ export function Topbar() {
       <div className="ml-auto flex items-center gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative rounded-full" aria-label="Notifications">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full"
+              aria-label="Notifications"
+            >
               <Bell className="h-4 w-4" />
               {notifications.length > 0 && (
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
@@ -173,11 +201,15 @@ export function Topbar() {
           <PopoverContent align="end" className="w-80 p-0">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <p className="text-sm font-semibold">Notifications</p>
-              <span className="text-xs text-muted-foreground">{notifications.length} new</span>
+              <span className="text-xs text-muted-foreground">
+                {notifications.length} new
+              </span>
             </div>
             <div className="max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
-                <p className="px-4 py-8 text-center text-sm text-muted-foreground">You're all caught up</p>
+                <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  You're all caught up
+                </p>
               ) : (
                 notifications.map((n) => (
                   <button
@@ -190,7 +222,9 @@ export function Topbar() {
                       <p className="text-sm font-medium">{n.title}</p>
                       <p className="text-xs text-muted-foreground">{n.body}</p>
                     </div>
-                    <span className="text-[11px] text-muted-foreground">{n.time}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {n.time}
+                    </span>
                   </button>
                 ))
               )}

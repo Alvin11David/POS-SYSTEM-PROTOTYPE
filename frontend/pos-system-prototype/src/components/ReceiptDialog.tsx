@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Printer, Sparkles } from "lucide-react";
+import { useCurrency } from "@/store/currencyStore";
 
 interface Props {
   sale: Sale | null;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
+  const { formatCurrency } = useCurrency();
   if (!sale) return null;
   const subtotal = sale.items.reduce((a, i) => a + i.price * i.quantity, 0);
   const tax = sale.total - subtotal;
@@ -24,7 +26,9 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm print:shadow-none print:border-0">
         <DialogHeader>
-          <DialogTitle className="sr-only">Receipt #{sale.id.slice(0, 6).toUpperCase()}</DialogTitle>
+          <DialogTitle className="sr-only">
+            Receipt #{sale.id.slice(0, 6).toUpperCase()}
+          </DialogTitle>
         </DialogHeader>
 
         <div id="receipt-print" className="space-y-4">
@@ -51,11 +55,11 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
                     {i.emoji} {i.name}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {i.quantity} × ${i.price.toFixed(2)}
+                    {i.quantity} × {formatCurrency(i.price)}
                   </p>
                 </div>
                 <span className="font-semibold tabular-nums">
-                  ${(i.quantity * i.price).toFixed(2)}
+                  {formatCurrency(i.quantity * i.price)}
                 </span>
               </li>
             ))}
@@ -66,15 +70,15 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between text-muted-foreground">
               <span>Subtotal</span>
-              <span className="tabular-nums">${subtotal.toFixed(2)}</span>
+              <span className="tabular-nums">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>Tax</span>
-              <span className="tabular-nums">${tax.toFixed(2)}</span>
+              <span className="tabular-nums">{formatCurrency(tax)}</span>
             </div>
             <div className="flex justify-between text-base font-bold pt-1">
               <span>Total</span>
-              <span className="tabular-nums">${sale.total.toFixed(2)}</span>
+              <span className="tabular-nums">{formatCurrency(sale.total)}</span>
             </div>
           </div>
 
@@ -84,10 +88,17 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
         </div>
 
         <div className="flex gap-2 print:hidden">
-          <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => onOpenChange(false)}
+          >
             Close
           </Button>
-          <Button className="flex-1 gap-2 shadow-glow" onClick={() => window.print()}>
+          <Button
+            className="flex-1 gap-2 shadow-glow"
+            onClick={() => window.print()}
+          >
             <Printer className="h-4 w-4" /> Print
           </Button>
         </div>

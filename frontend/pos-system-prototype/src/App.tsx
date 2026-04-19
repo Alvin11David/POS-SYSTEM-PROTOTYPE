@@ -39,8 +39,22 @@ function AppRoutes() {
   return (
     <AppLayout>
       <Routes>
-        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-        <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Index />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute>
+              <Sales />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/products"
           element={
@@ -91,9 +105,20 @@ function AppRoutes() {
         />
         <Route
           path="/reservations"
-          element={<ProtectedRoute><Reservations /></ProtectedRoute>}
+          element={
+            <ProtectedRoute>
+              <Reservations />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/guide" element={<ProtectedRoute><Guide /></ProtectedRoute>} />
+        <Route
+          path="/guide"
+          element={
+            <ProtectedRoute>
+              <Guide />
+            </ProtectedRoute>
+          }
+        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

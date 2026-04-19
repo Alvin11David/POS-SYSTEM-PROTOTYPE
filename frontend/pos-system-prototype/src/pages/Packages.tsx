@@ -28,8 +28,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Plus, Search, Trash2, Users, Package as PkgIcon } from "lucide-react";
+import {
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  Users,
+  Package as PkgIcon,
+} from "lucide-react";
 import { Package, usePosExtra } from "@/store/posExtraStore";
+import { useCurrency } from "@/store/currencyStore";
 import { toast } from "sonner";
 
 const empty: Omit<Package, "id"> = {
@@ -42,6 +50,7 @@ const empty: Omit<Package, "id"> = {
 
 export default function Packages() {
   const { packages, addPackage, updatePackage, deletePackage } = usePosExtra();
+  const { formatCurrency } = useCurrency();
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Package | null>(null);
@@ -51,9 +60,12 @@ export default function Packages() {
   const filtered = useMemo(
     () =>
       packages.filter((p) =>
-        [p.name, p.description, p.pos].join(" ").toLowerCase().includes(search.toLowerCase())
+        [p.name, p.description, p.pos]
+          .join(" ")
+          .toLowerCase()
+          .includes(search.toLowerCase()),
       ),
-    [packages, search]
+    [packages, search],
   );
 
   const openNew = () => {
@@ -63,7 +75,13 @@ export default function Packages() {
   };
   const openEdit = (p: Package) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description, amount: p.amount, maxDays: p.maxDays, pos: p.pos });
+    setForm({
+      name: p.name,
+      description: p.description,
+      amount: p.amount,
+      maxDays: p.maxDays,
+      pos: p.pos,
+    });
     setOpen(true);
   };
 
@@ -87,7 +105,9 @@ export default function Packages() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Membership Packages</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Membership Packages
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Create and manage POS membership packages.
           </p>
@@ -145,13 +165,21 @@ export default function Packages() {
                 {filtered.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{p.description || "—"}</TableCell>
-                    <TableCell className="text-right">{p.amount.toFixed(2)}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {p.description || "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(p.amount)}
+                    </TableCell>
                     <TableCell className="text-right">{p.maxDays}</TableCell>
                     <TableCell>{p.pos}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => openEdit(p)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => openEdit(p)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
@@ -175,7 +203,9 @@ export default function Packages() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit package" : "New package"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Edit package" : "New package"}
+            </DialogTitle>
           </DialogHeader>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
@@ -192,7 +222,9 @@ export default function Packages() {
               <Input
                 id="pkg-desc"
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -204,7 +236,12 @@ export default function Packages() {
                   min="0"
                   step="0.01"
                   value={form.amount}
-                  onChange={(e) => setForm({ ...form, amount: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      amount: parseFloat(e.target.value) || 0,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -214,7 +251,9 @@ export default function Packages() {
                   type="number"
                   min="1"
                   value={form.maxDays}
-                  onChange={(e) => setForm({ ...form, maxDays: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setForm({ ...form, maxDays: parseInt(e.target.value) || 0 })
+                  }
                 />
               </div>
             </div>
@@ -227,7 +266,11 @@ export default function Packages() {
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" className="shadow-glow">
@@ -238,11 +281,16 @@ export default function Packages() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
+      <AlertDialog
+        open={!!confirmId}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete package?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -263,4 +311,3 @@ export default function Packages() {
     </div>
   );
 }
-

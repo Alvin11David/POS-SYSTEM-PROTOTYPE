@@ -13,17 +13,25 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { usePos } from "@/store/posStore";
 import { useCurrency } from "@/store/currencyStore";
 import { CartItem, Product, Sale } from "@/types/pos";
 import { toast } from "sonner";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 
-const TAX_RATE = 0.08;
-
 export default function Sales() {
   const { products, recordSale } = usePos();
-  const { formatCurrency } = useCurrency();
+  const { formatCurrency, taxRate } = useCurrency();
+  const [previewImage, setPreviewImage] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
@@ -65,7 +73,7 @@ export default function Sales() {
   const clearCart = () => setCart([]);
 
   const subtotal = cart.reduce((a, i) => a + i.price * i.quantity, 0);
-  const tax = subtotal * TAX_RATE;
+  const tax = subtotal * taxRate;
   const total = subtotal + tax;
 
   const completeSale = () => {
@@ -130,9 +138,26 @@ export default function Sales() {
                   onClick={() => addToCart(p)}
                   className="group text-left rounded-2xl border border-border bg-card p-4 shadow-sm transition-base hover:-translate-y-0.5 hover:shadow-elevated hover:border-primary/40 active:scale-[0.98] animate-scale-in"
                 >
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-[11px] font-semibold text-primary transition-base group-hover:bg-primary group-hover:text-primary-foreground">
-                    {p.name.slice(0, 2).toUpperCase()}
-                  </div>
+                  <button
+                    type="button"
+                    className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-primary-soft text-[11px] font-semibold text-primary transition-base group-hover:bg-primary group-hover:text-primary-foreground"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (p.imageUrl) {
+                        setPreviewImage({ url: p.imageUrl, name: p.name });
+                      }
+                    }}
+                  >
+                    {p.imageUrl ? (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      p.name.slice(0, 2).toUpperCase()
+                    )}
+                  </button>
                   <p className="font-medium text-sm truncate">{p.name}</p>
                   <p className="text-primary font-bold mt-1">
                     {formatCurrency(p.price)}
@@ -192,7 +217,8 @@ export default function Sales() {
               </div>
               <p className="font-semibold">Sale completed!</p>
               <p className="text-xs text-muted-foreground mt-1">
-                #{success.id.slice(0, 6).toUpperCase()} · {formatCurrency(success.total)}
+                #{success.id.slice(0, 6).toUpperCase()} ·{" "}
+                {formatCurrency(success.total)}
               </p>
               <div className="mt-4 flex gap-2">
                 <Button
@@ -219,9 +245,24 @@ export default function Sales() {
                 key={item.id}
                 className="flex items-center gap-3 rounded-xl border border-border/60 p-2.5 transition-base hover:border-primary/30 animate-fade-in"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-[11px] font-semibold text-primary">
-                  {item.name.slice(0, 2).toUpperCase()}
-                </div>
+                <button
+                  type="button"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-soft text-[11px] font-semibold text-primary"
+                  onClick={() =>
+                    item.imageUrl &&
+                    setPreviewImage({ url: item.imageUrl, name: item.name })
+                  }
+                >
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    item.name.slice(0, 2).toUpperCase()
+                  )}
+                </button>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{item.name}</p>
                   <p className="text-xs text-muted-foreground">
@@ -270,7 +311,7 @@ export default function Sales() {
                 <span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
-                <span>Tax (8%)</span>
+                <span>Tax ({(taxRate * 100).toFixed(2)}%)</span>
                 <span>{formatCurrency(tax)}</span>
               </div>
               <div className="flex justify-between text-base font-bold pt-1">
@@ -283,7 +324,8 @@ export default function Sales() {
               onClick={completeSale}
               className="w-full gap-2 shadow-glow transition-base hover:scale-[1.02] gradient-primary"
             >
-                <Check className="h-4 w-4" /> Complete Sale · {formatCurrency(total)}
+              <Check className="h-4 w-4" /> Complete Sale ·{" "}
+              {formatCurrency(total)}
             </Button>
           </>
         )}
@@ -294,6 +336,26 @@ export default function Sales() {
         open={receiptOpen}
         onOpenChange={setReceiptOpen}
       />
+
+      <Dialog
+        open={!!previewImage}
+        onOpenChange={(o) => !o && setPreviewImage(null)}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{previewImage?.name ?? "Image preview"}</DialogTitle>
+          </DialogHeader>
+          {previewImage && (
+            <div className="overflow-hidden rounded-xl border border-border/60 bg-secondary">
+              <img
+                src={previewImage.url}
+                alt={previewImage.name}
+                className="h-auto max-h-[70vh] w-full object-contain"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -11,10 +11,13 @@ export const CURRENCY_OPTIONS: Array<{ code: CurrencyCode; label: string }> = [
 ];
 
 const CURRENCY_KEY = "jambo_currency";
+const TAX_RATE_KEY = "jambo_tax_rate";
 
 interface CurrencyCtx {
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
+  taxRate: number;
+  setTaxRate: (rate: number) => void;
   formatCurrency: (value: number) => string;
   currencyOptions: typeof CURRENCY_OPTIONS;
 }
@@ -28,6 +31,14 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       return stored;
     }
     return "USD";
+  });
+  const [taxRate, setTaxRate] = useState<number>(() => {
+    const stored = localStorage.getItem(TAX_RATE_KEY);
+    const parsed = stored ? Number(stored) : NaN;
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      return parsed;
+    }
+    return 0.08;
   });
 
   const value = useMemo<CurrencyCtx>(() => {
@@ -45,10 +56,16 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         setCurrency(next);
         localStorage.setItem(CURRENCY_KEY, next);
       },
+      taxRate,
+      setTaxRate: (next) => {
+        const safe = Number.isFinite(next) && next >= 0 ? next : 0;
+        setTaxRate(safe);
+        localStorage.setItem(TAX_RATE_KEY, String(safe));
+      },
       formatCurrency,
       currencyOptions: CURRENCY_OPTIONS,
     };
-  }, [currency]);
+  }, [currency, taxRate]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

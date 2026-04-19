@@ -76,7 +76,14 @@ const empty: FormState = {
 
 export default function Staff() {
   const { users, addUser, updateUser, deleteUser, currentUser } = useAuth();
-  const { currency, setCurrency, formatCurrency, currencyOptions } = useCurrency();
+  const {
+    currency,
+    setCurrency,
+    formatCurrency,
+    currencyOptions,
+    taxRate,
+    setTaxRate,
+  } = useCurrency();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<FormState>(empty);
@@ -147,10 +154,13 @@ export default function Staff() {
       {/* Role legend */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <Card className="p-4 shadow-sm sm:col-span-2 xl:col-span-3">
-          <div className="grid gap-3 md:grid-cols-[220px_1fr] md:items-end">
+          <div className="grid gap-3 md:grid-cols-[220px_180px_1fr] md:items-end">
             <div className="space-y-2">
               <Label>Preferred currency</Label>
-              <Select value={currency} onValueChange={(v) => setCurrency(v as typeof currency)}>
+              <Select
+                value={currency}
+                onValueChange={(v) => setCurrency(v as typeof currency)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -163,8 +173,24 @@ export default function Staff() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="sales-tax">Sales tax (%)</Label>
+              <Input
+                id="sales-tax"
+                type="number"
+                min="0"
+                step="0.01"
+                value={(taxRate * 100).toFixed(2)}
+                onChange={(e) => {
+                  const parsed = Number(e.target.value);
+                  setTaxRate(Number.isFinite(parsed) ? parsed / 100 : 0);
+                }}
+              />
+            </div>
             <p className="text-sm text-muted-foreground">
-              This updates prices across Sales, Products, Reports, and receipts. Preview: {formatCurrency(6000)}
+              This updates prices across Sales, Products, Reports, and receipts.
+              Preview: {formatCurrency(6000)} · Tax {(taxRate * 100).toFixed(2)}
+              %
             </p>
           </div>
         </Card>

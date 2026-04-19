@@ -68,6 +68,10 @@ export default function Products() {
   const { products, addProduct, updateProduct, deleteProduct } = usePos();
   const { formatCurrency, currency } = useCurrency();
   const [open, setOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
   const [editing, setEditing] = useState<Product | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -194,7 +198,17 @@ export default function Products() {
               className="group p-5 shadow-soft transition-base hover:shadow-elevated hover:-translate-y-0.5 animate-scale-in"
             >
               <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
+                <button
+                  type="button"
+                  className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-secondary"
+                  onClick={() =>
+                    p.imageUrl &&
+                    setPreviewImage({
+                      url: p.imageUrl,
+                      name: p.name,
+                    })
+                  }
+                >
                   {p.imageUrl ? (
                     <img
                       src={p.imageUrl}
@@ -204,7 +218,7 @@ export default function Products() {
                   ) : (
                     <PackageIcon className="h-6 w-6 text-muted-foreground" />
                   )}
-                </div>
+                </button>
                 <Badge variant="secondary" className="rounded-full text-xs">
                   {p.category ?? "General"}
                 </Badge>
@@ -261,7 +275,17 @@ export default function Products() {
                 onChange={onImageChange}
               />
               <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
+                <button
+                  type="button"
+                  className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-secondary"
+                  onClick={() =>
+                    imageUrl &&
+                    setPreviewImage({
+                      url: imageUrl,
+                      name: name || "Product preview",
+                    })
+                  }
+                >
                   {imageUrl ? (
                     <img
                       src={imageUrl}
@@ -271,7 +295,7 @@ export default function Products() {
                   ) : (
                     <PackageIcon className="h-6 w-6 text-muted-foreground" />
                   )}
-                </div>
+                </button>
                 {imageUrl && (
                   <Button
                     type="button"
@@ -344,6 +368,26 @@ export default function Products() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        open={!!previewImage}
+        onOpenChange={(o) => !o && setPreviewImage(null)}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{previewImage?.name ?? "Image preview"}</DialogTitle>
+          </DialogHeader>
+          {previewImage && (
+            <div className="overflow-hidden rounded-xl border border-border/60 bg-secondary">
+              <img
+                src={previewImage.url}
+                alt={previewImage.name}
+                className="h-auto max-h-[70vh] w-full object-contain"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

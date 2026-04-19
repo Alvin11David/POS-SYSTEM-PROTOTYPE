@@ -51,9 +51,15 @@ import {
   ReservationStatus,
   usePosExtra,
 } from "@/store/posExtraStore";
+import { useCurrency } from "@/store/currencyStore";
 import { toast } from "sonner";
 
-const STATUSES: ReservationStatus[] = ["Open", "Confirmed", "Cancelled", "Complete"];
+const STATUSES: ReservationStatus[] = [
+  "Open",
+  "Confirmed",
+  "Cancelled",
+  "Complete",
+];
 
 const emptyForm: Omit<Reservation, "id" | "createdAt"> = {
   clientName: "",
@@ -87,15 +93,24 @@ export default function Reservations() {
   } = usePosExtra();
 
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ReservationStatus | "All">("All");
+  const [statusFilter, setStatusFilter] = useState<ReservationStatus | "All">(
+    "All",
+  );
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Reservation | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const { formatCurrency } = useCurrency();
 
   const filtered = useMemo(() => {
     return reservations.filter((r) => {
-      const matchesQ = [r.clientName, r.organisation, r.telephone, r.email, r.tableNo]
+      const matchesQ = [
+        r.clientName,
+        r.organisation,
+        r.telephone,
+        r.email,
+        r.tableNo,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase()
@@ -159,7 +174,9 @@ export default function Reservations() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">POS Reservations</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            POS Reservations
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Track bookings, deposits and table assignments.
           </p>
@@ -183,7 +200,9 @@ export default function Reservations() {
             </div>
             <Select
               value={statusFilter}
-              onValueChange={(v) => setStatusFilter(v as ReservationStatus | "All")}
+              onValueChange={(v) =>
+                setStatusFilter(v as ReservationStatus | "All")
+              }
             >
               <SelectTrigger className="w-40">
                 <SelectValue />
@@ -191,7 +210,9 @@ export default function Reservations() {
               <SelectContent>
                 <SelectItem value="All">All statuses</SelectItem>
                 {STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -233,7 +254,9 @@ export default function Reservations() {
                     <TableCell>
                       <div className="font-medium">{r.clientName}</div>
                       {r.organisation && (
-                        <div className="text-xs text-muted-foreground">{r.organisation}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {r.organisation}
+                        </div>
                       )}
                     </TableCell>
                     <TableCell>{r.date}</TableCell>
@@ -241,9 +264,13 @@ export default function Reservations() {
                     <TableCell className="text-right">{r.adults}</TableCell>
                     <TableCell className="text-right">{r.children}</TableCell>
                     <TableCell>{r.tableNo}</TableCell>
-                    <TableCell className="text-right">{r.deposit.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatCurrency(r.deposit)}
+                    </TableCell>
                     <TableCell>
-                      <Badge className={`${statusTone[r.status]} hover:${statusTone[r.status]}`}>
+                      <Badge
+                        className={`${statusTone[r.status]} hover:${statusTone[r.status]}`}
+                      >
                         {r.status}
                       </Badge>
                     </TableCell>
@@ -260,7 +287,11 @@ export default function Reservations() {
                             <CheckCircle2 className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button size="icon" variant="ghost" onClick={() => openEdit(r)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => openEdit(r)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
@@ -284,7 +315,9 @@ export default function Reservations() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit reservation" : "Client details"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Edit reservation" : "Client details"}
+            </DialogTitle>
             <DialogDescription>
               Capture all the booking information for this client.
             </DialogDescription>
@@ -296,7 +329,9 @@ export default function Reservations() {
                 <Input
                   id="r-name"
                   value={form.clientName}
-                  onChange={(e) => setForm({ ...form, clientName: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, clientName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -305,7 +340,9 @@ export default function Reservations() {
                 <Input
                   id="r-org"
                   value={form.organisation}
-                  onChange={(e) => setForm({ ...form, organisation: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, organisation: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -313,7 +350,9 @@ export default function Reservations() {
                 <Input
                   id="r-tel"
                   value={form.telephone}
-                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, telephone: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -352,7 +391,9 @@ export default function Reservations() {
                   type="number"
                   min="0"
                   value={form.adults}
-                  onChange={(e) => setForm({ ...form, adults: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setForm({ ...form, adults: parseInt(e.target.value) || 0 })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -362,7 +403,12 @@ export default function Reservations() {
                   type="number"
                   min="0"
                   value={form.children}
-                  onChange={(e) => setForm({ ...form, children: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      children: parseInt(e.target.value) || 0,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -376,7 +422,9 @@ export default function Reservations() {
                   </SelectTrigger>
                   <SelectContent>
                     {tables.map((t) => (
-                      <SelectItem key={t.id} value={t.number}>{t.number}</SelectItem>
+                      <SelectItem key={t.id} value={t.number}>
+                        {t.number}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -389,7 +437,12 @@ export default function Reservations() {
                   min="0"
                   step="0.01"
                   value={form.deposit}
-                  onChange={(e) => setForm({ ...form, deposit: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      deposit: parseFloat(e.target.value) || 0,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -397,21 +450,27 @@ export default function Reservations() {
                 <Input
                   id="r-desc"
                   value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="r-status">Status</Label>
                 <Select
                   value={form.status}
-                  onValueChange={(v) => setForm({ ...form, status: v as ReservationStatus })}
+                  onValueChange={(v) =>
+                    setForm({ ...form, status: v as ReservationStatus })
+                  }
                 >
                   <SelectTrigger id="r-status">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -426,20 +485,31 @@ export default function Reservations() {
               >
                 <Printer className="h-4 w-4" /> Print
               </Button>
-              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setOpen(false)}
+              >
                 Close
               </Button>
-              <Button type="submit" className="shadow-glow">Save</Button>
+              <Button type="submit" className="shadow-glow">
+                Save
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
+      <AlertDialog
+        open={!!confirmId}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete reservation?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
