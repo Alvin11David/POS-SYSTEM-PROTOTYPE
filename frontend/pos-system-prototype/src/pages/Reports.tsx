@@ -134,7 +134,11 @@ export default function Reports() {
               </button>
             ))}
           </div>
-          <Button variant="outline" onClick={exportCsv} className="gap-2 ml-auto sm:ml-0">
+          <Button
+            variant="outline"
+            onClick={exportCsv}
+            className="gap-2 ml-auto sm:ml-0"
+          >
             <Download className="h-4 w-4" /> Export CSV
           </Button>
         </div>
