@@ -102,9 +102,9 @@ export default function Packages() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+    <div className="space-y-6 max-w-[1500px] mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             Membership Packages
           </h1>
@@ -112,19 +112,22 @@ export default function Packages() {
             Create and manage POS membership packages.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Button variant="outline" className="gap-2 w-full sm:w-auto">
             <Users className="h-4 w-4" /> Clients
           </Button>
-          <Button onClick={openNew} className="gap-2 shadow-glow">
+          <Button
+            onClick={openNew}
+            className="gap-2 shadow-glow w-full sm:w-auto"
+          >
             <Plus className="h-4 w-4" /> New Package
           </Button>
         </div>
       </div>
 
-      <Card className="p-4 md:p-6 shadow-soft">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div className="relative max-w-sm flex-1">
+      <Card className="p-4 sm:p-6 shadow-soft">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-sm sm:flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search package…"
@@ -133,7 +136,7 @@ export default function Packages() {
               className="pl-9"
             />
           </div>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground sm:text-right">
             Displaying {filtered.length} of {packages.length} items
           </span>
         </div>
@@ -149,8 +152,8 @@ export default function Packages() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border/60 overflow-hidden">
-            <Table>
+          <div className="rounded-xl border border-border/60 overflow-x-auto">
+            <Table className="min-w-[780px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -201,7 +204,7 @@ export default function Packages() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
               {editing ? "Edit package" : "New package"}
@@ -265,15 +268,16 @@ export default function Packages() {
                 onChange={(e) => setForm({ ...form, pos: e.target.value })}
               />
             </div>
-            <DialogFooter>
+            <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit" className="shadow-glow">
+              <Button type="submit" className="shadow-glow w-full sm:w-auto">
                 Save
               </Button>
             </DialogFooter>

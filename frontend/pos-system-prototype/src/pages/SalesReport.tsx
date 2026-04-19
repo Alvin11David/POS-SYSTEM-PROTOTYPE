@@ -96,9 +96,9 @@ export default function SalesReport() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+    <div className="space-y-6 max-w-375 mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             Combined POS Sales Report
           </h1>
@@ -106,22 +106,25 @@ export default function SalesReport() {
             Filter, view and export every sale across your outlets.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <Button
             variant="outline"
             onClick={() => window.print()}
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto"
           >
             <Printer className="h-4 w-4" /> Print
           </Button>
-          <Button onClick={exportCsv} className="gap-2 shadow-glow">
+          <Button
+            onClick={exportCsv}
+            className="gap-2 shadow-glow w-full sm:w-auto"
+          >
             <Download className="h-4 w-4" /> Export CSV
           </Button>
         </div>
       </div>
 
-      <Card className="p-4 md:p-6 shadow-soft">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+      <Card className="p-4 sm:p-6 shadow-soft">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
             <Label htmlFor="from">Date from</Label>
             <Input
@@ -203,7 +206,7 @@ export default function SalesReport() {
         </Card>
       </div>
 
-      <Card className="p-4 md:p-6 shadow-soft">
+      <Card className="p-4 sm:p-6 shadow-soft">
         {filtered.length === 0 ? (
           <div className="py-16 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-soft text-primary mb-3">
@@ -215,8 +218,8 @@ export default function SalesReport() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border/60 overflow-hidden">
-            <Table>
+          <div className="rounded-xl border border-border/60 overflow-x-auto">
+            <Table className="min-w-230">
               <TableHeader>
                 <TableRow>
                   <TableHead>Order No.</TableHead>

@@ -49,9 +49,12 @@ export default function Tables() {
   const filtered = useMemo(
     () =>
       tables.filter((t) =>
-        [t.number, t.description, t.pos].join(" ").toLowerCase().includes(search.toLowerCase())
+        [t.number, t.description, t.pos]
+          .join(" ")
+          .toLowerCase()
+          .includes(search.toLowerCase()),
       ),
-    [tables, search]
+    [tables, search],
   );
 
   const openNew = () => {
@@ -82,22 +85,27 @@ export default function Tables() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Manage POS Tables</h1>
+    <div className="space-y-6 max-w-[1500px] mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Manage POS Tables
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Set up tables across your bar, restaurant and lounges.
           </p>
         </div>
-        <Button onClick={openNew} className="gap-2 shadow-glow">
+        <Button
+          onClick={openNew}
+          className="gap-2 shadow-glow w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4" /> New Table
         </Button>
       </div>
 
-      <Card className="p-4 md:p-6 shadow-soft">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div className="relative max-w-sm flex-1">
+      <Card className="p-4 sm:p-6 shadow-soft">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-sm sm:flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search tables…"
@@ -106,7 +114,7 @@ export default function Tables() {
               className="pl-9"
             />
           </div>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground sm:text-right">
             Displaying {filtered.length} of {tables.length} items
           </span>
         </div>
@@ -122,8 +130,8 @@ export default function Tables() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border/60 overflow-hidden">
-            <Table>
+          <div className="rounded-xl border border-border/60 overflow-x-auto">
+            <Table className="min-w-[760px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-16">#</TableHead>
@@ -136,13 +144,21 @@ export default function Tables() {
               <TableBody>
                 {filtered.map((t, i) => (
                   <TableRow key={t.id}>
-                    <TableCell className="text-muted-foreground">{i + 1}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {i + 1}
+                    </TableCell>
                     <TableCell className="font-medium">{t.number}</TableCell>
-                    <TableCell className="text-muted-foreground">{t.description}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {t.description}
+                    </TableCell>
                     <TableCell>{t.pos}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => openEdit(t)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => openEdit(t)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
@@ -164,7 +180,7 @@ export default function Tables() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{editing ? "Edit table" : "New table"}</DialogTitle>
           </DialogHeader>
@@ -183,7 +199,9 @@ export default function Tables() {
               <Input
                 id="t-desc"
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 placeholder="Main Bar, Restaurant, Health Club"
               />
             </div>
@@ -195,21 +213,33 @@ export default function Tables() {
                 onChange={(e) => setForm({ ...form, pos: e.target.value })}
               />
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button type="submit" className="shadow-glow">Save</Button>
+              <Button type="submit" className="shadow-glow w-full sm:w-auto">
+                Save
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
+      <AlertDialog
+        open={!!confirmId}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete table?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>

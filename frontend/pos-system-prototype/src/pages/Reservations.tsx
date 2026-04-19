@@ -171,9 +171,9 @@ export default function Reservations() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+    <div className="space-y-6 max-w-[1500px] mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             POS Reservations
           </h1>
@@ -181,15 +181,18 @@ export default function Reservations() {
             Track bookings, deposits and table assignments.
           </p>
         </div>
-        <Button onClick={openNew} className="gap-2 shadow-glow">
+        <Button
+          onClick={openNew}
+          className="gap-2 shadow-glow w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4" /> New Reservation
         </Button>
       </div>
 
-      <Card className="p-4 md:p-6 shadow-soft">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex flex-wrap items-center gap-3 flex-1">
-            <div className="relative max-w-sm flex-1 min-w-[180px]">
+      <Card className="p-4 sm:p-6 shadow-soft">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-1">
+            <div className="relative w-full sm:max-w-sm sm:flex-1 min-w-[180px]">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search reservation…"
@@ -204,7 +207,7 @@ export default function Reservations() {
                 setStatusFilter(v as ReservationStatus | "All")
               }
             >
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -217,7 +220,7 @@ export default function Reservations() {
               </SelectContent>
             </Select>
           </div>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground sm:text-right">
             Displaying {filtered.length} of {reservations.length} items
           </span>
         </div>
@@ -233,8 +236,8 @@ export default function Reservations() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-border/60 overflow-hidden">
-            <Table>
+          <div className="rounded-xl border border-border/60 overflow-x-auto">
+            <Table className="min-w-[1120px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Client</TableHead>
@@ -313,7 +316,7 @@ export default function Reservations() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {editing ? "Edit reservation" : "Client details"}
@@ -476,12 +479,12 @@ export default function Reservations() {
                 </Select>
               </div>
             </div>
-            <DialogFooter className="gap-2">
+            <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="button"
                 variant="outline"
                 onClick={printReservation}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <Printer className="h-4 w-4" /> Print
               </Button>
@@ -489,10 +492,11 @@ export default function Reservations() {
                 type="button"
                 variant="ghost"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Close
               </Button>
-              <Button type="submit" className="shadow-glow">
+              <Button type="submit" className="shadow-glow w-full sm:w-auto">
                 Save
               </Button>
             </DialogFooter>

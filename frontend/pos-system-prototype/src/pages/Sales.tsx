@@ -91,11 +91,11 @@ export default function Sales() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-375 mx-auto h-[calc(100vh-7rem)]">
+    <div className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-[1500px] mx-auto lg:h-[calc(100vh-7rem)]">
       {/* Products */}
       <div className="flex flex-col min-h-0">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="relative flex-1 min-w-50">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
@@ -122,9 +122,9 @@ export default function Sales() {
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-1">
+        <div className="flex-1 lg:overflow-y-auto pr-1">
           {filtered.length === 0 ? (
-            <Card className="p-12 text-center shadow-soft">
+            <Card className="p-8 sm:p-12 text-center shadow-soft">
               <p className="text-sm font-medium">No products found</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Try a different search or category.
@@ -170,7 +170,7 @@ export default function Sales() {
       </div>
 
       {/* Cart */}
-      <Card className="flex flex-col p-5 shadow-elevated lg:sticky lg:top-20 lg:max-h-[calc(100vh-7rem)] animate-slide-in-right">
+      <Card className="flex flex-col p-4 sm:p-5 shadow-elevated lg:sticky lg:top-20 lg:max-h-[calc(100vh-7rem)] animate-slide-in-right">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
@@ -204,7 +204,7 @@ export default function Sales() {
                 <ShoppingCart className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="text-sm font-medium">Cart is empty</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-55">
+              <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
                 Tap a product to add it to the order.
               </p>
             </div>
