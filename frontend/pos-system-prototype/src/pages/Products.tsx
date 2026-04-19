@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Pencil, Plus, Search, Trash2, Package as PackageIcon } from "lucide-react";
+import {
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  Package as PackageIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +34,11 @@ import { Product } from "@/types/pos";
 import { toast } from "sonner";
 
 const MAX_IMAGE_SIZE = 1_500_000;
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
 
 async function fileToDataUrl(file: File): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -48,7 +59,9 @@ export default function Products() {
   const [query, setQuery] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<Product | null>(null);
 
-  const filtered = products.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(query.toLowerCase()),
+  );
 
   const openNew = () => {
     setEditing(null);
@@ -94,7 +107,11 @@ export default function Products() {
       return;
     }
     if (editing) {
-      updateProduct(editing.id, { name: name.trim(), price: priceNum, imageUrl });
+      updateProduct(editing.id, {
+        name: name.trim(),
+        price: priceNum,
+        imageUrl,
+      });
       toast.success("Product updated");
     } else {
       addProduct({ name: name.trim(), price: priceNum, imageUrl });
@@ -113,10 +130,17 @@ export default function Products() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Products</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your inventory and pricing.</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Products
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage your inventory and pricing.
+          </p>
         </div>
-        <Button onClick={openNew} className="gap-2 shadow-glow transition-base hover:scale-[1.02]">
+        <Button
+          onClick={openNew}
+          className="gap-2 shadow-glow transition-base hover:scale-[1.02]"
+        >
           <Plus className="h-4 w-4" /> Add Product
         </Button>
       </div>
@@ -139,7 +163,9 @@ export default function Products() {
             <PackageIcon className="h-6 w-6" />
           </div>
           <h3 className="mt-4 font-semibold">No products yet</h3>
-          <p className="text-sm text-muted-foreground mt-1">Add your first product to get started.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Add your first product to get started.
+          </p>
           <Button onClick={openNew} className="mt-5 gap-2">
             <Plus className="h-4 w-4" /> Add Product
           </Button>
@@ -154,7 +180,11 @@ export default function Products() {
               <div className="flex items-start justify-between">
                 <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
                   {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" />
+                    <img
+                      src={p.imageUrl}
+                      alt={p.name}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     <PackageIcon className="h-6 w-6 text-muted-foreground" />
                   )}
@@ -165,10 +195,17 @@ export default function Products() {
               </div>
               <div className="mt-4">
                 <h3 className="font-semibold truncate">{p.name}</h3>
-                <p className="text-lg font-bold text-primary mt-1">${p.price.toFixed(2)}</p>
+                <p className="text-lg font-bold text-primary mt-1">
+                  ${formatCurrency(p.price)}
+                </p>
               </div>
               <div className="mt-4 flex gap-2 transition-base sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
-                <Button variant="outline" size="sm" className="flex-1 gap-1.5" onClick={() => openEdit(p)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-1.5"
+                  onClick={() => openEdit(p)}
+                >
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </Button>
                 <Button
@@ -189,25 +226,43 @@ export default function Products() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit product" : "Add product"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Edit product" : "Add product"}
+            </DialogTitle>
             <DialogDescription>
-              {editing ? "Update the product details." : "Add a new product to your inventory."}
+              {editing
+                ? "Update the product details."
+                : "Add a new product to your inventory."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="image">Product image</Label>
-              <Input id="image" type="file" accept="image/*" onChange={onImageChange} />
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={onImageChange}
+              />
               <div className="flex items-center gap-3">
                 <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
                   {imageUrl ? (
-                    <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
+                    <img
+                      src={imageUrl}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     <PackageIcon className="h-6 w-6 text-muted-foreground" />
                   )}
                 </div>
                 {imageUrl && (
-                  <Button type="button" variant="outline" size="sm" onClick={() => setImageUrl("")}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setImageUrl("")}
+                  >
                     Remove image
                   </Button>
                 )}
@@ -215,7 +270,13 @@ export default function Products() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="name">Product name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Espresso" autoFocus />
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Espresso"
+                autoFocus
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="price">Price ($)</Label>
@@ -230,7 +291,11 @@ export default function Products() {
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" className="shadow-glow">
@@ -241,12 +306,16 @@ export default function Products() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
+      <AlertDialog
+        open={!!confirmDelete}
+        onOpenChange={(o) => !o && setConfirmDelete(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this product?</AlertDialogTitle>
             <AlertDialogDescription>
-              <b>{confirmDelete?.name}</b> will be removed from your catalog. This can't be undone.
+              <b>{confirmDelete?.name}</b> will be removed from your catalog.
+              This can't be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
