@@ -145,15 +145,6 @@ export function TourOverlay() {
 
   const showHighlight = Boolean(step.selector && targetRect);
   const padding = step.padding ?? 8;
-  const spotlightX = targetRect
-    ? targetRect.left + targetRect.width / 2
-    : window.innerWidth / 2;
-  const spotlightY = targetRect
-    ? targetRect.top + targetRect.height / 2
-    : window.innerHeight / 2;
-  const spotlightRadius = targetRect
-    ? Math.max(targetRect.width, targetRect.height) / 2 + padding + 22
-    : Math.min(window.innerWidth, window.innerHeight) / 4;
 
   return createPortal(
     <div className="fixed inset-0 z-100">
@@ -162,16 +153,14 @@ export function TourOverlay() {
         aria-label="Close tour"
         className="absolute inset-0 cursor-default"
         style={{
-          background: showHighlight
-            ? `radial-gradient(circle ${spotlightRadius}px at ${spotlightX}px ${spotlightY}px, transparent 0, transparent ${spotlightRadius}px, rgba(0, 0, 0, 0.58) ${spotlightRadius + 1}px)`
-            : "rgba(0, 0, 0, 0.58)",
+          background: showHighlight ? "transparent" : "rgba(0, 0, 0, 0.58)",
         }}
         onClick={stop}
       />
 
       {showHighlight && targetRect && (
         <div
-          className="pointer-events-none absolute rounded-2xl border-2 border-primary shadow-[0_0_0_2px_rgba(255,255,255,0.25)]"
+          className="pointer-events-none absolute rounded-2xl border-2 border-primary shadow-[0_0_0_9999px_rgba(0,0,0,0.58),0_0_0_2px_rgba(255,255,255,0.25)]"
           style={{
             left: targetRect.left - padding,
             top: targetRect.top - padding,

@@ -163,8 +163,8 @@ export default function Guide() {
                 right after.
               </Step>
               <Step n={2} title="Add your products">
-                Open <b>Products</b>, click <b>Add product</b>, enter a name,
-                price and emoji.
+                Open <b>Products</b>, click <b>Add product</b>, then enter a
+                name, price, and optional product image.
               </Step>
               <Step n={3} title="Run your first sale">
                 Open <b>Sales</b>, tap products to fill the cart, then hit{" "}
@@ -173,6 +173,12 @@ export default function Guide() {
               <Step n={4} title="Invite your team">
                 Open <b>Staff</b> and create a username + password for each
                 person. Pick a role.
+              </Step>
+              <Step n={5} title="Take the guided tour">
+                Use the in-app tour overlays to learn the main areas. You can
+                replay the tour anytime from <b>Products</b> using the{" "}
+                <b>Tour</b>
+                button.
               </Step>
             </div>
           </Section>
@@ -258,8 +264,8 @@ export default function Guide() {
               <li className="flex gap-3">
                 <LayoutDashboard className="h-4 w-4 mt-0.5 text-primary" />
                 <span>
-                  <b>Add</b> — set name, price, category and emoji to make items
-                  easy to spot.
+                  <b>Add</b> — set name and price, then upload an image for
+                  visual product cards in Sales.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -272,8 +278,8 @@ export default function Guide() {
               <li className="flex gap-3">
                 <Boxes className="h-4 w-4 mt-0.5 text-primary" />
                 <span>
-                  <b>Edit & delete</b> — hover any product card for quick
-                  actions.
+                  <b>Edit, preview & delete</b> — use quick actions on each
+                  product card to maintain your catalog.
                 </span>
               </li>
             </ul>
@@ -293,8 +299,8 @@ export default function Guide() {
                 Use + / − to set quantities. Remove items with the trash icon.
               </Step>
               <Step n={3} title="Complete the sale">
-                Hit the highlighted <b>Complete sale</b> button. Tax (8%) is
-                added automatically.
+                Hit the highlighted <b>Complete sale</b> button. Tax is added
+                automatically based on your configured <b>Sales tax (%)</b>.
               </Step>
               <Step n={4} title="Print or share the receipt">
                 The receipt opens instantly — print it, or click{" "}
@@ -340,8 +346,8 @@ export default function Guide() {
               {[
                 { k: "⌘ K", v: "Focus the global search" },
                 { k: "Click a recent transaction", v: "Open its receipt" },
-                { k: "Use emojis on products", v: "Easier to scan visually" },
-                { k: "Categories", v: "Group by Drinks / Food / Bakery..." },
+                { k: "Products Tour", v: "Replay the guided tour overlays" },
+                { k: "Product images", v: "Easier to scan items at checkout" },
               ].map((s) => (
                 <div
                   key={s.k}
