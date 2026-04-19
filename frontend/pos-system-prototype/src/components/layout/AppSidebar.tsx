@@ -36,15 +36,40 @@ interface NavItem {
 const items: NavItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Sales", url: "/sales", icon: ShoppingCart },
-  { title: "Products", url: "/products", icon: Package, roles: ["admin", "manager"] },
-  { title: "Reports", url: "/reports", icon: BarChart3, roles: ["admin", "manager"] },
+  {
+    title: "Products",
+    url: "/products",
+    icon: Package,
+    roles: ["admin", "manager"],
+  },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: BarChart3,
+    roles: ["admin", "manager"],
+  },
 ];
 
 const operationsItems: NavItem[] = [
   { title: "Reservations", url: "/reservations", icon: CalendarDays },
-  { title: "Tables", url: "/tables", icon: Utensils, roles: ["admin", "manager"] },
-  { title: "Packages", url: "/packages", icon: CreditCard, roles: ["admin", "manager"] },
-  { title: "Sales Report", url: "/sales-report", icon: FileText, roles: ["admin", "manager"] },
+  {
+    title: "Tables",
+    url: "/tables",
+    icon: Utensils,
+    roles: ["admin", "manager"],
+  },
+  {
+    title: "Packages",
+    url: "/packages",
+    icon: CreditCard,
+    roles: ["admin", "manager"],
+  },
+  {
+    title: "Sales Report",
+    url: "/sales-report",
+    icon: FileText,
+    roles: ["admin", "manager"],
+  },
 ];
 
 const adminItems: NavItem[] = [
@@ -69,7 +94,11 @@ export function AppSidebar() {
       const active = location.pathname === item.url;
       return (
         <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild tooltip={item.title} className="h-10 rounded-xl">
+          <SidebarMenuButton
+            asChild
+            tooltip={item.title}
+            className="h-10 rounded-xl"
+          >
             <NavLink
               to={item.url}
               end
@@ -84,7 +113,9 @@ export function AppSidebar() {
               )}
               <item.icon
                 className={`h-[18px] w-[18px] transition-base ${
-                  active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                  active
+                    ? "text-primary"
+                    : "text-muted-foreground group-hover:text-foreground"
                 }`}
               />
               <span className="text-[13px]">{item.title}</span>
@@ -104,8 +135,12 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-[15px] font-bold tracking-tight">Jambo POS</span>
-              <span className="text-[10.5px] text-muted-foreground font-medium">Retail Suite · v1.0</span>
+              <span className="text-[15px] font-bold tracking-tight">
+                Jambo POS
+              </span>
+              <span className="text-[10.5px] text-muted-foreground font-medium">
+                Retail Suite · v1.0
+              </span>
             </div>
           )}
         </div>
@@ -126,7 +161,9 @@ export function AppSidebar() {
             Operations
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-0.5">{renderItems(operationsItems)}</SidebarMenu>
+            <SidebarMenu className="gap-0.5">
+              {renderItems(operationsItems)}
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
@@ -136,7 +173,9 @@ export function AppSidebar() {
               Admin
             </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu className="gap-0.5">{renderItems(adminItems)}</SidebarMenu>
+              <SidebarMenu className="gap-0.5">
+                {renderItems(adminItems)}
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
@@ -146,7 +185,9 @@ export function AppSidebar() {
             Help
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-0.5">{renderItems(helpItems)}</SidebarMenu>
+            <SidebarMenu className="gap-0.5">
+              {renderItems(helpItems)}
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
@@ -154,10 +195,16 @@ export function AppSidebar() {
           <div className="mt-auto mx-2 mb-2 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/15 p-3.5">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <p className="text-[11px] font-semibold text-foreground">Pro tip</p>
+              <p className="text-[11px] font-semibold text-foreground">
+                Pro tip
+              </p>
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Press <kbd className="px-1 py-0.5 rounded bg-background border border-border text-[10px] font-mono">⌘K</kbd> to quickly find anything.
+              Press{" "}
+              <kbd className="px-1 py-0.5 rounded bg-background border border-border text-[10px] font-mono">
+                ⌘K
+              </kbd>{" "}
+              to quickly find anything.
             </p>
           </div>
         )}
