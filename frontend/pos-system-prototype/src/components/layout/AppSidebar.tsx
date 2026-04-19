@@ -106,7 +106,10 @@ export function AppSidebar() {
       className="border-r border-sidebar-border"
       data-tour="sidebar"
     >
-      <SidebarHeader className="border-b border-sidebar-border">
+      <SidebarHeader
+        className="border-b border-sidebar-border"
+        data-tour="sidebar-panel"
+      >
         <div className="flex items-center gap-2.5 px-2 py-3.5">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl gradient-primary p-1.5 shadow-glow">
             <img

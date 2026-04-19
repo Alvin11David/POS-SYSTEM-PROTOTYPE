@@ -1,5 +1,6 @@
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTour } from "@/store/tourStore";
@@ -12,7 +13,24 @@ function clamp(value: number, min: number, max: number) {
 
 export function TourOverlay() {
   const { active, step, index, total, next, prev, stop } = useTour();
+  const location = useLocation();
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const sidebarOpenAttemptForStep = useRef<number | null>(null);
+
+  const getVisibleRect = (selector: string): DOMRect | null => {
+    const target = document.querySelector(selector) as HTMLElement | null;
+    if (!target) return null;
+    const rect = target.getBoundingClientRect();
+    const inViewport =
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.bottom > 0 &&
+      rect.right > 0 &&
+      rect.left < window.innerWidth &&
+      rect.top < window.innerHeight;
+
+    return inViewport ? rect : null;
+  };
 
   useEffect(() => {
     if (!active || !step) {
@@ -26,23 +44,44 @@ export function TourOverlay() {
         return;
       }
 
-      const target = document.querySelector(
-        step.selector,
-      ) as HTMLElement | null;
-      setTargetRect(target?.getBoundingClientRect() ?? null);
+      let rect = getVisibleRect(step.selector);
+
+      // On small screens the inline search is hidden; use the topbar container instead.
+      if (!rect && step.selector === "[data-tour='topbar-search']") {
+        rect = getVisibleRect("[data-tour='topbar']");
+      }
+
+      // If the sidebar is off-canvas, open it once for the current step.
+      if (
+        !rect &&
+        step.selector === "[data-tour='sidebar']" &&
+        sidebarOpenAttemptForStep.current !== index
+      ) {
+        sidebarOpenAttemptForStep.current = index;
+        const trigger = document.querySelector(
+          "[data-tour='sidebar-trigger']",
+        ) as HTMLElement | null;
+        trigger?.click();
+        window.requestAnimationFrame(update);
+        return;
+      }
+
+      setTargetRect(rect);
     };
 
     update();
     const raf = window.requestAnimationFrame(update);
+    const retry = window.setInterval(update, 120);
     window.addEventListener("resize", update);
     window.addEventListener("scroll", update, true);
 
     return () => {
       window.cancelAnimationFrame(raf);
+      window.clearInterval(retry);
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [active, step]);
+  }, [active, step, index, location.pathname]);
 
   const tooltipStyle = useMemo<React.CSSProperties>(() => {
     if (!step) return {};

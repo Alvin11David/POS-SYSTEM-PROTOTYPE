@@ -25,13 +25,14 @@ export type TourStep = {
 const STEPS: TourStep[] = [
   {
     route: "/",
+    selector: "[data-tour='dashboard-hero']",
     title: "Welcome to Jambo POS 👋",
     body: "Let's take a quick tour. We'll walk you through the most important parts of the system in under a minute.",
-    placement: "center",
+    placement: "bottom",
   },
   {
     route: "/",
-    selector: "[data-tour='sidebar']",
+    selector: "[data-tour='sidebar-panel']",
     title: "Main navigation",
     body: "Use the sidebar to jump between Dashboard, Sales, Products, Reports and more. Items are grouped by purpose.",
     placement: "right",

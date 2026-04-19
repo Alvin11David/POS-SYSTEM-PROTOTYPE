@@ -95,15 +95,21 @@ export function Topbar() {
   );
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl sm:gap-3 sm:px-4">
-      <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg" />
+    <header
+      className="sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl sm:gap-3 sm:px-4"
+      data-tour="topbar"
+    >
+      <SidebarTrigger
+        className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg"
+        data-tour="sidebar-trigger"
+      />
 
       <Popover open={open && query.length > 0} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div
             data-tour="topbar-search"
             className={cn(
-              "relative hidden min-w-0 flex-1 md:ml-6",
+              "relative hidden min-w-0 flex-1 md:ml-1",
               isDesktopSidebarExpanded
                 ? "md:block md:max-w-none"
                 : "md:block md:max-w-sm lg:max-w-md",
