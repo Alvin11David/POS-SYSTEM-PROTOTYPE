@@ -95,7 +95,7 @@ export function AppSidebar() {
     });
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+    <Sidebar collapsible="offcanvas" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-3.5">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl gradient-primary shadow-glow">
