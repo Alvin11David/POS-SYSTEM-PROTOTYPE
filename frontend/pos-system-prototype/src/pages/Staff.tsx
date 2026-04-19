@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Pencil,
   Plus,
@@ -88,6 +88,20 @@ export default function Staff() {
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
+  const [taxInput, setTaxInput] = useState(() => (taxRate * 100).toFixed(2));
+
+  useEffect(() => {
+    setTaxInput((taxRate * 100).toFixed(2));
+  }, [taxRate]);
+
+  const commitTaxInput = () => {
+    const parsed = Number(taxInput);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      setTaxInput((taxRate * 100).toFixed(2));
+      return;
+    }
+    setTaxRate(parsed / 100);
+  };
 
   const openAdd = () => {
     setEditing(null);
@@ -177,13 +191,18 @@ export default function Staff() {
               <Label htmlFor="sales-tax">Sales tax (%)</Label>
               <Input
                 id="sales-tax"
-                type="number"
-                min="0"
-                step="0.01"
-                value={(taxRate * 100).toFixed(2)}
+                type="text"
+                inputMode="decimal"
+                value={taxInput}
                 onChange={(e) => {
-                  const parsed = Number(e.target.value);
-                  setTaxRate(Number.isFinite(parsed) ? parsed / 100 : 0);
+                  setTaxInput(e.target.value);
+                }}
+                onBlur={commitTaxInput}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitTaxInput();
+                  }
                 }}
               />
             </div>

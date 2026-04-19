@@ -13,10 +13,6 @@ import Index from "./pages/Index.tsx";
 import Sales from "./pages/Sales.tsx";
 import Products from "./pages/Products.tsx";
 import Reports from "./pages/Reports.tsx";
-import SalesReport from "./pages/SalesReport.tsx";
-import Packages from "./pages/Packages.tsx";
-import Tables from "./pages/Tables.tsx";
-import Reservations from "./pages/Reservations.tsx";
 import Staff from "./pages/Staff.tsx";
 import Guide from "./pages/Guide.tsx";
 import Login from "./pages/Login.tsx";
@@ -76,38 +72,6 @@ function AppRoutes() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <Staff />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/sales-report"
-          element={
-            <ProtectedRoute roles={["admin", "manager"]}>
-              <SalesReport />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/packages"
-          element={
-            <ProtectedRoute roles={["admin", "manager"]}>
-              <Packages />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tables"
-          element={
-            <ProtectedRoute roles={["admin", "manager"]}>
-              <Tables />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reservations"
-          element={
-            <ProtectedRoute>
-              <Reservations />
             </ProtectedRoute>
           }
         />

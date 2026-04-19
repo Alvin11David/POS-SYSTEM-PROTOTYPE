@@ -6,10 +6,6 @@ import {
   Sparkles,
   Users,
   BookOpen,
-  CreditCard,
-  Utensils,
-  CalendarDays,
-  FileText,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import jamboLogo from "@/assets/images/Jambo-logo.webp";
@@ -47,28 +43,6 @@ const items: NavItem[] = [
     title: "Reports",
     url: "/reports",
     icon: BarChart3,
-    roles: ["admin", "manager"],
-  },
-];
-
-const operationsItems: NavItem[] = [
-  { title: "Reservations", url: "/reservations", icon: CalendarDays },
-  {
-    title: "Tables",
-    url: "/tables",
-    icon: Utensils,
-    roles: ["admin", "manager"],
-  },
-  {
-    title: "Packages",
-    url: "/packages",
-    icon: CreditCard,
-    roles: ["admin", "manager"],
-  },
-  {
-    title: "Sales Report",
-    url: "/sales-report",
-    icon: FileText,
     roles: ["admin", "manager"],
   },
 ];
@@ -158,17 +132,6 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">{renderItems(items)}</SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground/80 px-3">
-            Operations
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="gap-0.5">
-              {renderItems(operationsItems)}
-            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
