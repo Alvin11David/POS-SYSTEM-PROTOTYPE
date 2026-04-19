@@ -77,8 +77,8 @@ export function Topbar() {
   );
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md">
-      <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/60 bg-background/75 px-4 backdrop-blur-xl">
+      <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg" />
 
       <Popover open={open && query.length > 0} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
