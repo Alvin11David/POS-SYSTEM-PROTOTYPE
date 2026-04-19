@@ -27,7 +27,16 @@ import { usePos } from "@/store/posStore";
 import { Product } from "@/types/pos";
 import { toast } from "sonner";
 
-const EMOJIS = ["📦", "🛍️", "🎁", "☕", "🍔", "🍕", "🥐", "🍰", "🥗", "🍊", "🥑", "🧁"];
+const MAX_IMAGE_SIZE = 1_500_000;
+
+async function fileToDataUrl(file: File): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("Failed to read image"));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function Products() {
   const { products, addProduct, updateProduct, deleteProduct } = usePos();
@@ -35,7 +44,7 @@ export default function Products() {
   const [editing, setEditing] = useState<Product | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [emoji, setEmoji] = useState("📦");
+  const [imageUrl, setImageUrl] = useState("");
   const [query, setQuery] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<Product | null>(null);
 
@@ -45,7 +54,7 @@ export default function Products() {
     setEditing(null);
     setName("");
     setPrice("");
-    setEmoji("📦");
+    setImageUrl("");
     setOpen(true);
   };
 
@@ -53,8 +62,28 @@ export default function Products() {
     setEditing(p);
     setName(p.name);
     setPrice(String(p.price));
-    setEmoji(p.emoji ?? "📦");
+    setImageUrl(p.imageUrl ?? "");
     setOpen(true);
+  };
+
+  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file");
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error("Image must be 1.5MB or smaller");
+      return;
+    }
+
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      setImageUrl(dataUrl);
+    } catch {
+      toast.error("Could not read image");
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,10 +94,10 @@ export default function Products() {
       return;
     }
     if (editing) {
-      updateProduct(editing.id, { name: name.trim(), price: priceNum, emoji });
+      updateProduct(editing.id, { name: name.trim(), price: priceNum, imageUrl });
       toast.success("Product updated");
     } else {
-      addProduct({ name: name.trim(), price: priceNum, emoji });
+      addProduct({ name: name.trim(), price: priceNum, imageUrl });
       toast.success("Product added");
     }
     setOpen(false);
@@ -123,8 +152,12 @@ export default function Products() {
               className="group p-5 shadow-soft transition-base hover:shadow-elevated hover:-translate-y-0.5 animate-scale-in"
             >
               <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-3xl">
-                  {p.emoji ?? "📦"}
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <PackageIcon className="h-6 w-6 text-muted-foreground" />
+                  )}
                 </div>
                 <Badge variant="secondary" className="rounded-full text-xs">
                   {p.category ?? "General"}
@@ -163,20 +196,21 @@ export default function Products() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label>Icon</Label>
-              <div className="flex flex-wrap gap-2">
-                {EMOJIS.map((e) => (
-                  <button
-                    key={e}
-                    type="button"
-                    onClick={() => setEmoji(e)}
-                    className={`h-10 w-10 rounded-xl text-xl transition-base ${
-                      emoji === e ? "bg-primary-soft ring-2 ring-primary" : "bg-secondary hover:bg-accent"
-                    }`}
-                  >
-                    {e}
-                  </button>
-                ))}
+              <Label htmlFor="image">Product image</Label>
+              <Input id="image" type="file" accept="image/*" onChange={onImageChange} />
+              <div className="flex items-center gap-3">
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-secondary">
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
+                  ) : (
+                    <PackageIcon className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                {imageUrl && (
+                  <Button type="button" variant="outline" size="sm" onClick={() => setImageUrl("")}>
+                    Remove image
+                  </Button>
+                )}
               </div>
             </div>
             <div className="space-y-2">

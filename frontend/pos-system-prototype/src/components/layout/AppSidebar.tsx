@@ -12,6 +12,7 @@ import {
   FileText,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import jamboLogo from "@/assets/images/Jambo-logo.webp";
 import {
   Sidebar,
   SidebarContent,
@@ -129,8 +130,12 @@ export function AppSidebar() {
     <Sidebar collapsible="offcanvas" className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-3.5">
-          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl gradient-primary shadow-glow">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl gradient-primary p-1.5 shadow-glow">
+            <img
+              src={jamboLogo}
+              alt="Jambo POS"
+              className="h-full w-full object-contain"
+            />
             <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-sidebar-background" />
           </div>
           {!collapsed && (

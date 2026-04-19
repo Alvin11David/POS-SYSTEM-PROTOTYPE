@@ -1,5 +1,13 @@
 import { useMemo, useState } from "react";
-import { Check, Minus, Plus, Search, ShoppingCart, Trash2, X } from "lucide-react";
+import {
+  Check,
+  Minus,
+  Plus,
+  Search,
+  ShoppingCart,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,13 +36,16 @@ export default function Sales() {
   const filtered = products.filter(
     (p) =>
       (category === "All" || p.category === category) &&
-      p.name.toLowerCase().includes(query.toLowerCase())
+      p.name.toLowerCase().includes(query.toLowerCase()),
   );
 
   const addToCart = (p: Product) => {
     setCart((prev) => {
       const existing = prev.find((x) => x.id === p.id);
-      if (existing) return prev.map((x) => (x.id === p.id ? { ...x, quantity: x.quantity + 1 } : x));
+      if (existing)
+        return prev.map((x) =>
+          x.id === p.id ? { ...x, quantity: x.quantity + 1 } : x,
+        );
       return [...prev, { ...p, quantity: 1 }];
     });
   };
@@ -43,11 +54,12 @@ export default function Sales() {
     setCart((prev) =>
       prev
         .map((x) => (x.id === id ? { ...x, quantity: x.quantity + delta } : x))
-        .filter((x) => x.quantity > 0)
+        .filter((x) => x.quantity > 0),
     );
   };
 
-  const removeItem = (id: string) => setCart((prev) => prev.filter((x) => x.id !== id));
+  const removeItem = (id: string) =>
+    setCart((prev) => prev.filter((x) => x.id !== id));
   const clearCart = () => setCart([]);
 
   const subtotal = cart.reduce((a, i) => a + i.price * i.quantity, 0);
@@ -69,13 +81,18 @@ export default function Sales() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-[1500px] mx-auto h-[calc(100vh-7rem)]">
+    <div className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-375 mx-auto h-[calc(100vh-7rem)]">
       {/* Products */}
       <div className="flex flex-col min-h-0">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-50">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products..." className="pl-9 h-11" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search products..."
+              className="pl-9 h-11"
+            />
           </div>
         </div>
 
@@ -99,7 +116,9 @@ export default function Sales() {
           {filtered.length === 0 ? (
             <Card className="p-12 text-center shadow-soft">
               <p className="text-sm font-medium">No products found</p>
-              <p className="text-xs text-muted-foreground mt-1">Try a different search or category.</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Try a different search or category.
+              </p>
             </Card>
           ) : (
             <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -109,11 +128,13 @@ export default function Sales() {
                   onClick={() => addToCart(p)}
                   className="group text-left rounded-2xl border border-border bg-card p-4 shadow-sm transition-base hover:-translate-y-0.5 hover:shadow-elevated hover:border-primary/40 active:scale-[0.98] animate-scale-in"
                 >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary text-2xl mb-3 transition-base group-hover:bg-primary-soft">
-                    {p.emoji ?? "📦"}
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-[11px] font-semibold text-primary transition-base group-hover:bg-primary group-hover:text-primary-foreground">
+                    {p.name.slice(0, 2).toUpperCase()}
                   </div>
                   <p className="font-medium text-sm truncate">{p.name}</p>
-                  <p className="text-primary font-bold mt-1">${p.price.toFixed(2)}</p>
+                  <p className="text-primary font-bold mt-1">
+                    ${p.price.toFixed(2)}
+                  </p>
                 </button>
               ))}
             </div>
@@ -130,11 +151,18 @@ export default function Sales() {
             </div>
             <div>
               <h2 className="font-semibold">Current Order</h2>
-              <p className="text-xs text-muted-foreground">{cart.length} items</p>
+              <p className="text-xs text-muted-foreground">
+                {cart.length} items
+              </p>
             </div>
           </div>
           {cart.length > 0 && (
-            <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearCart}
+              className="text-muted-foreground"
+            >
               Clear
             </Button>
           )}
@@ -149,7 +177,7 @@ export default function Sales() {
                 <ShoppingCart className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="text-sm font-medium">Cart is empty</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
+              <p className="text-xs text-muted-foreground mt-1 max-w-55">
                 Tap a product to add it to the order.
               </p>
             </div>
@@ -162,13 +190,22 @@ export default function Sales() {
               </div>
               <p className="font-semibold">Sale completed!</p>
               <p className="text-xs text-muted-foreground mt-1">
-                #{success.id.slice(0, 6).toUpperCase()} · ${success.total.toFixed(2)}
+                #{success.id.slice(0, 6).toUpperCase()} · $
+                {success.total.toFixed(2)}
               </p>
               <div className="mt-4 flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setReceiptOpen(true)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReceiptOpen(true)}
+                >
                   View receipt
                 </Button>
-                <Button size="sm" className="shadow-glow" onClick={() => setSuccess(null)}>
+                <Button
+                  size="sm"
+                  className="shadow-glow"
+                  onClick={() => setSuccess(null)}
+                >
                   New order
                 </Button>
               </div>
@@ -181,19 +218,33 @@ export default function Sales() {
                 key={item.id}
                 className="flex items-center gap-3 rounded-xl border border-border/60 p-2.5 transition-base hover:border-primary/30 animate-fade-in"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-lg">
-                  {item.emoji ?? "📦"}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-[11px] font-semibold text-primary">
+                  {item.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">${item.price.toFixed(2)} each</p>
+                  <p className="text-xs text-muted-foreground">
+                    ${item.price.toFixed(2)} each
+                  </p>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQty(item.id, -1)}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => updateQty(item.id, -1)}
+                  >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
-                  <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQty(item.id, 1)}>
+                  <span className="w-6 text-center text-sm font-semibold">
+                    {item.quantity}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => updateQty(item.id, 1)}
+                  >
                     <Plus className="h-3 w-3" />
                   </Button>
                 </div>
@@ -237,7 +288,11 @@ export default function Sales() {
         )}
       </Card>
 
-      <ReceiptDialog sale={success} open={receiptOpen} onOpenChange={setReceiptOpen} />
+      <ReceiptDialog
+        sale={success}
+        open={receiptOpen}
+        onOpenChange={setReceiptOpen}
+      />
     </div>
   );
 }

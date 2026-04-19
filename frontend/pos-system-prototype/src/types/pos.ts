@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   category?: string;
   emoji?: string;
+  imageUrl?: string;
 }
 
 export interface CartItem extends Product {
