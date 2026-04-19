@@ -7,8 +7,10 @@ import { PosProvider } from "@/store/posStore";
 import { PosExtraProvider } from "@/store/posExtraStore";
 import { AuthProvider } from "@/store/authStore";
 import { CurrencyProvider } from "@/store/currencyStore";
+import { TourProvider } from "@/store/tourStore";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { TourOverlay } from "@/components/TourOverlay";
 import Index from "./pages/Index.tsx";
 import Sales from "./pages/Sales.tsx";
 import Products from "./pages/Products.tsx";
@@ -100,7 +102,10 @@ const App = () => (
           <PosProvider>
             <PosExtraProvider>
               <BrowserRouter>
-                <AppRoutes />
+                <TourProvider>
+                  <AppRoutes />
+                  <TourOverlay />
+                </TourProvider>
               </BrowserRouter>
             </PosExtraProvider>
           </PosProvider>

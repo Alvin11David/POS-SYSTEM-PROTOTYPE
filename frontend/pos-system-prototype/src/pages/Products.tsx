@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { usePos } from "@/store/posStore";
 import { useCurrency } from "@/store/currencyStore";
+import { useTour } from "@/store/tourStore";
 import { Product } from "@/types/pos";
 import { toast } from "sonner";
 
@@ -67,6 +68,7 @@ async function fileToDataUrl(file: File): Promise<string> {
 export default function Products() {
   const { products, addProduct, updateProduct, deleteProduct } = usePos();
   const { formatCurrency, currency } = useCurrency();
+  const { start } = useTour();
   const [open, setOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<{
     url: string;
@@ -147,7 +149,7 @@ export default function Products() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto" data-tour="products-page">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
@@ -157,15 +159,26 @@ export default function Products() {
             Manage your inventory and pricing.
           </p>
         </div>
-        <Button
-          onClick={openNew}
-          className="gap-2 shadow-glow transition-base hover:scale-[1.02]"
-        >
-          <Plus className="h-4 w-4" /> Add Product
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={start}
+            className="gap-2 transition-base hover:scale-[1.02]"
+            data-tour="products-tour-start"
+          >
+            <PackageIcon className="h-4 w-4" /> Tour
+          </Button>
+          <Button
+            onClick={openNew}
+            className="gap-2 shadow-glow transition-base hover:scale-[1.02]"
+            data-tour="products-add"
+          >
+            <Plus className="h-4 w-4" /> Add Product
+          </Button>
+        </div>
       </div>
 
-      <Card className="p-4 shadow-soft">
+      <Card className="p-4 shadow-soft" data-tour="products-search">
         <div className="relative max-w-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -178,7 +191,10 @@ export default function Products() {
       </Card>
 
       {filtered.length === 0 ? (
-        <Card className="p-12 text-center shadow-soft">
+        <Card
+          className="p-12 text-center shadow-soft"
+          data-tour="products-empty"
+        >
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-primary">
             <PackageIcon className="h-6 w-6" />
           </div>
@@ -191,7 +207,10 @@ export default function Products() {
           </Button>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          data-tour="products-grid"
+        >
           {filtered.map((p) => (
             <Card
               key={p.id}
@@ -254,7 +273,7 @@ export default function Products() {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" data-tour="products-dialog">
           <DialogHeader>
             <DialogTitle>
               {editing ? "Edit product" : "Add product"}

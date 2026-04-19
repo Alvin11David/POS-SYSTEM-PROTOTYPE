@@ -79,7 +79,7 @@ export function AppSidebar() {
               end
               className={`group relative transition-base ${
                 active
-                  ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent text-primary font-semibold"
+                  ? "bg-linear-to-r from-primary/10 via-primary/5 to-transparent text-primary font-semibold"
                   : "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
               }`}
             >
@@ -87,7 +87,7 @@ export function AppSidebar() {
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full gradient-primary" />
               )}
               <item.icon
-                className={`h-[18px] w-[18px] transition-base ${
+                className={`h-4.5 w-4.5 transition-base ${
                   active
                     ? "text-primary"
                     : "text-muted-foreground group-hover:text-foreground"
@@ -160,7 +160,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {!collapsed && currentUser && (
-          <div className="mt-auto mx-2 mb-2 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/15 p-3.5">
+          <div className="mt-auto mx-2 mb-2 rounded-2xl bg-linear-to-br from-primary/10 via-primary/5 to-transparent border border-primary/15 p-3.5">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <p className="text-[11px] font-semibold text-foreground">

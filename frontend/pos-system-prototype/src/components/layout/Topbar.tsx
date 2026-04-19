@@ -102,7 +102,7 @@ export function Topbar() {
         <PopoverTrigger asChild>
           <div
             className={cn(
-              "relative hidden min-w-0 flex-1 md:ml-2",
+              "relative hidden min-w-0 flex-1 md:ml-6",
               isDesktopSidebarExpanded
                 ? "md:block md:max-w-none"
                 : "md:block md:max-w-sm lg:max-w-md",
