@@ -66,13 +66,13 @@ export default function Dashboard() {
   }, [sales]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary via-primary to-primary-glow p-6 md:p-8 shadow-glow-lg">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(0_0%_100%/0.2),_transparent_50%)]" />
+    <div className="space-y-6 max-w-375 mx-auto">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/60 bg-linear-to-br from-primary via-primary to-primary-glow p-5 sm:p-6 md:p-8 shadow-glow-lg">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(0_0%_100%/0.2),transparent_50%)]" />
         <div className="absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute top-10 right-32 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
-        <div className="relative flex flex-wrap items-end justify-between gap-4">
-          <div className="text-primary-foreground">
+        <div className="absolute top-10 right-32 h-32 w-32 rounded-full bg-white/5 blur-2xl hidden sm:block" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+          <div className="text-primary-foreground min-w-0">
             <Badge className="mb-3 bg-white/15 text-white hover:bg-white/20 border-0 backdrop-blur-sm rounded-full px-3 py-1 text-[11px] font-medium">
               {new Date().toLocaleDateString(undefined, {
                 weekday: "long",
@@ -80,7 +80,7 @@ export default function Dashboard() {
                 day: "numeric",
               })}
             </Badge>
-            <h1 className="text-2xl md:text-[32px] font-bold tracking-tight leading-tight">
+            <h1 className="text-xl sm:text-2xl md:text-[32px] font-bold tracking-tight leading-tight">
               Welcome back, {firstName} 👋
             </h1>
             <p className="text-sm md:text-[15px] text-white/80 mt-1.5 max-w-lg">
@@ -90,7 +90,7 @@ export default function Dashboard() {
           <Button
             onClick={() => navigate("/sales")}
             size="lg"
-            className="gap-2 bg-white text-primary hover:bg-white/95 hover:scale-[1.03] transition-spring shadow-lg font-semibold rounded-xl"
+            className="gap-2 bg-white text-primary hover:bg-white/95 hover:scale-[1.03] transition-spring shadow-lg font-semibold rounded-xl w-full sm:w-auto"
           >
             <Plus className="h-4 w-4" /> New Sale
           </Button>
@@ -128,7 +128,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="p-6 lg:col-span-2 shadow-sm border-border/60 transition-base hover:shadow-soft">
+        <Card className="p-4 sm:p-6 lg:col-span-2 shadow-sm border-border/60 transition-base hover:shadow-soft">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="font-semibold text-[15px]">Sales overview</h3>
@@ -140,7 +140,7 @@ export default function Dashboard() {
               Weekly
             </Badge>
           </div>
-          <div className="h-72">
+          <div className="h-64 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
@@ -203,7 +203,7 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card className="p-6 shadow-sm border-border/60 transition-base hover:shadow-soft">
+        <Card className="p-4 sm:p-6 shadow-sm border-border/60 transition-base hover:shadow-soft">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="font-semibold text-[15px]">Recent transactions</h3>
@@ -217,11 +217,11 @@ export default function Dashboard() {
           </div>
           {sales.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center mb-3 ring-4 ring-secondary/40">
+              <div className="h-14 w-14 rounded-2xl bg-linear-to-br from-secondary to-secondary/50 flex items-center justify-center mb-3 ring-4 ring-secondary/40">
                 <Receipt className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="text-sm font-semibold">No sales yet</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+              <p className="text-xs text-muted-foreground mt-1 max-w-50">
                 Complete your first sale to see it here.
               </p>
               <Button

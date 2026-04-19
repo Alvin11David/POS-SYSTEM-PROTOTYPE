@@ -149,7 +149,7 @@ export default function Staff() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-375 mx-auto">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Staff & roles</h1>
@@ -375,7 +375,7 @@ export default function Staff() {
 
       {/* Add/Edit dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-primary" />
@@ -444,15 +444,16 @@ export default function Staff() {
                 </SelectContent>
               </Select>
             </div>
-            <DialogFooter>
+            <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit" className="shadow-glow">
+              <Button type="submit" className="shadow-glow w-full sm:w-auto">
                 {editing ? "Save changes" : "Create login"}
               </Button>
             </DialogFooter>

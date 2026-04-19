@@ -9,7 +9,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { ROLE_LABEL, useAuth } from "@/store/authStore";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -31,8 +31,10 @@ import { usePos } from "@/store/posStore";
 import { useCurrency } from "@/store/currencyStore";
 import { toast } from "sonner";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
+import { cn } from "@/lib/utils";
 
 export function Topbar() {
+  const { state, isMobile } = useSidebar();
   const navigate = useNavigate();
   const { products, sales } = usePos();
   const { formatCurrency } = useCurrency();
@@ -47,6 +49,7 @@ export function Topbar() {
   const [open, setOpen] = useState(false);
   const [pwdOpen, setPwdOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isDesktopSidebarExpanded = !isMobile && state === "expanded";
 
   // Cmd/Ctrl + K focuses search
   useEffect(() => {
@@ -92,12 +95,19 @@ export function Topbar() {
   );
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/60 bg-background/75 px-4 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl sm:gap-3 sm:px-4">
       <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg" />
 
       <Popover open={open && query.length > 0} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div className="relative hidden md:block flex-1 max-w-md">
+          <div
+            className={cn(
+              "relative hidden min-w-0 flex-1",
+              isDesktopSidebarExpanded
+                ? "lg:block lg:max-w-sm"
+                : "md:block md:max-w-sm lg:max-w-md",
+            )}
+          >
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               ref={inputRef}
@@ -117,7 +127,7 @@ export function Topbar() {
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-[var(--radix-popover-trigger-width)] p-0"
+          className="w-(--radix-popover-trigger-width) p-0"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <div className="max-h-80 overflow-y-auto p-2">
@@ -183,7 +193,7 @@ export function Topbar() {
         </PopoverContent>
       </Popover>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -198,7 +208,10 @@ export function Topbar() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-80 p-0">
+          <PopoverContent
+            align="end"
+            className="w-[calc(100vw-2rem)] max-w-80 p-0"
+          >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <p className="text-sm font-semibold">Notifications</p>
               <span className="text-xs text-muted-foreground">
@@ -234,13 +247,18 @@ export function Topbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2.5 rounded-full border border-border bg-card px-1.5 py-1 pr-3 shadow-sm transition-base hover:shadow-soft hover:border-primary/30">
+            <button className="flex items-center gap-2 rounded-full border border-border bg-card px-1.5 py-1 pr-2 sm:pr-3 shadow-sm transition-base hover:shadow-soft hover:border-primary/30">
               <Avatar className="h-7 w-7">
                 <AvatarFallback className="gradient-primary text-[11px] font-semibold text-primary-foreground">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden sm:flex flex-col leading-tight items-start">
+              <div
+                className={cn(
+                  "hidden flex-col items-start leading-tight",
+                  isDesktopSidebarExpanded ? "xl:flex" : "lg:flex",
+                )}
+              >
                 <span className="text-xs font-semibold">
                   {currentUser?.fullName || currentUser?.username || "Guest"}
                 </span>

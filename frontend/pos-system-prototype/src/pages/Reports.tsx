@@ -108,8 +108,8 @@ export default function Reports() {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6 max-w-375 mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             Reports
@@ -118,8 +118,8 @@ export default function Reports() {
             Track performance and best-sellers.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex rounded-full bg-secondary p-1">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <div className="flex rounded-full bg-secondary p-1 w-full sm:w-auto">
             {(["today", "week", "all"] as Period[]).map((p) => (
               <button
                 key={p}
@@ -134,7 +134,7 @@ export default function Reports() {
               </button>
             ))}
           </div>
-          <Button variant="outline" onClick={exportCsv} className="gap-2">
+          <Button variant="outline" onClick={exportCsv} className="gap-2 ml-auto sm:ml-0">
             <Download className="h-4 w-4" /> Export CSV
           </Button>
         </div>
@@ -167,8 +167,8 @@ export default function Reports() {
         />
       </div>
 
-      <Card className="p-6 shadow-soft">
-        <div className="flex items-center justify-between mb-4">
+      <Card className="p-4 sm:p-6 shadow-soft">
+        <div className="flex items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="font-semibold">Top products</h3>
             <p className="text-xs text-muted-foreground">
@@ -188,7 +188,7 @@ export default function Reports() {
             </p>
           </div>
         ) : (
-          <div className="h-72">
+          <div className="h-64 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={topProducts}
@@ -235,7 +235,7 @@ export default function Reports() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {topProducts.length > 0 && (
-          <Card className="p-6 shadow-soft">
+          <Card className="p-4 sm:p-6 shadow-soft">
             <h3 className="font-semibold mb-4">Best-sellers</h3>
             <ul className="divide-y divide-border">
               {topProducts.map((p, i) => (
@@ -258,7 +258,7 @@ export default function Reports() {
           </Card>
         )}
 
-        <Card className="p-6 shadow-soft">
+        <Card className="p-4 sm:p-6 shadow-soft">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">All transactions</h3>
             <Badge variant="secondary" className="rounded-full">
