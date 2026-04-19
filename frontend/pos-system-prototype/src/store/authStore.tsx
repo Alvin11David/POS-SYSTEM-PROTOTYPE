@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
 export type Role = "admin" | "manager" | "cashier";
 
@@ -28,15 +34,23 @@ const defaultUsers: User[] = [
 interface AuthCtx {
   users: User[];
   currentUser: User | null;
-  login: (username: string, password: string) => { ok: boolean; error?: string };
+  login: (
+    username: string,
+    password: string,
+  ) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
-  addUser: (u: Omit<User, "id" | "createdAt">) => { ok: boolean; error?: string };
+  addUser: (u: Omit<User, "id" | "createdAt">) => {
+    ok: boolean;
+    error?: string;
+  };
   updateUser: (id: string, u: Partial<Omit<User, "id" | "createdAt">>) => void;
   deleteUser: (id: string) => void;
   hasRole: (...roles: Role[]) => boolean;
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
+
+type BackendUser = Pick<User, "id" | "username" | "fullName" | "role">;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>(() => {
@@ -62,25 +76,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [users]);
 
   useEffect(() => {
-    if (currentUser) localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+    if (currentUser)
+      localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
     else localStorage.removeItem(SESSION_KEY);
   }, [currentUser]);
 
-  const login: AuthCtx["login"] = (username, password) => {
-    const u = users.find(
-      (x) => x.username.toLowerCase() === username.trim().toLowerCase() && x.password === password
-    );
-    if (!u) return { ok: false, error: "Invalid username or password" };
-    setCurrentUser(u);
-    return { ok: true };
+  const login: AuthCtx["login"] = async (username, password) => {
+    try {
+      const response = await fetch("/api/auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        return {
+          ok: false,
+          error: data.detail ?? "Invalid username or password",
+        };
+      }
+
+      const backendUser = data.user as BackendUser;
+      const localUser = users.find(
+        (entry) =>
+          entry.username.toLowerCase() === backendUser.username.toLowerCase(),
+      );
+      const sessionUser: User = localUser
+        ? {
+            ...localUser,
+            ...backendUser,
+            password,
+          }
+        : {
+            id: backendUser.id,
+            username: backendUser.username,
+            password,
+            fullName: backendUser.fullName,
+            role: backendUser.role,
+            createdAt: new Date().toISOString(),
+          };
+
+      setCurrentUser(sessionUser);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: "Unable to reach the login service" };
+    }
   };
 
-  const logout = () => setCurrentUser(null);
+  const logout = () => {
+    void fetch("/api/auth/logout/", {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => {});
+    setCurrentUser(null);
+  };
 
   const addUser: AuthCtx["addUser"] = (u) => {
     if (!u.username.trim()) return { ok: false, error: "Username required" };
-    if (u.password.length < 4) return { ok: false, error: "Password must be 4+ characters" };
-    if (users.some((x) => x.username.toLowerCase() === u.username.trim().toLowerCase()))
+    if (u.password.length < 4)
+      return { ok: false, error: "Password must be 4+ characters" };
+    if (
+      users.some(
+        (x) => x.username.toLowerCase() === u.username.trim().toLowerCase(),
+      )
+    )
       return { ok: false, error: "Username already exists" };
     const newUser: User = {
       ...u,
@@ -109,7 +173,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <Ctx.Provider
-      value={{ users, currentUser, login, logout, addUser, updateUser, deleteUser, hasRole }}
+      value={{
+        users,
+        currentUser,
+        login,
+        logout,
+        addUser,
+        updateUser,
+        deleteUser,
+        hasRole,
+      }}
     >
       {children}
     </Ctx.Provider>

@@ -19,19 +19,17 @@ export default function Login() {
     if (currentUser) navigate("/", { replace: true });
   }, [currentUser, navigate]);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      const res = login(username, password);
-      setLoading(false);
-      if (res.ok) {
-        toast.success(`Welcome back, ${username}!`);
-        navigate("/", { replace: true });
-      } else {
-        toast.error(res.error ?? "Login failed");
-      }
-    }, 250);
+    const res = await login(username, password);
+    setLoading(false);
+    if (res.ok) {
+      toast.success(`Welcome back, ${username}!`);
+      navigate("/", { replace: true });
+    } else {
+      toast.error(res.error ?? "Login failed");
+    }
   };
 
   return (
