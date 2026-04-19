@@ -45,6 +45,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCurrency } from "@/store/currencyStore";
 import { toast } from "sonner";
 
 const roleIcon: Record<Role, React.ElementType> = {
@@ -75,6 +76,7 @@ const empty: FormState = {
 
 export default function Staff() {
   const { users, addUser, updateUser, deleteUser, currentUser } = useAuth();
+  const { currency, setCurrency, formatCurrency, currencyOptions } = useCurrency();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState<FormState>(empty);
@@ -144,6 +146,29 @@ export default function Staff() {
 
       {/* Role legend */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <Card className="p-4 shadow-sm sm:col-span-2 xl:col-span-3">
+          <div className="grid gap-3 md:grid-cols-[220px_1fr] md:items-end">
+            <div className="space-y-2">
+              <Label>Preferred currency</Label>
+              <Select value={currency} onValueChange={(v) => setCurrency(v as typeof currency)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencyOptions.map((option) => (
+                    <SelectItem key={option.code} value={option.code}>
+                      {option.code} · {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This updates prices across Sales, Products, Reports, and receipts. Preview: {formatCurrency(6000)}
+            </p>
+          </div>
+        </Card>
+
         {(Object.keys(ROLE_LABEL) as Role[]).map((r) => {
           const Icon = roleIcon[r];
           return (

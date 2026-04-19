@@ -6,6 +6,7 @@ import { StatCard } from "@/components/StatCard";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 import { DollarSign, Download, Receipt, ShoppingBag, TrendingUp } from "lucide-react";
 import { usePos } from "@/store/posStore";
+import { useCurrency } from "@/store/currencyStore";
 import { Sale } from "@/types/pos";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
@@ -14,6 +15,7 @@ type Period = "today" | "week" | "all";
 
 export default function Reports() {
   const { sales } = usePos();
+  const { formatCurrency } = useCurrency();
   const [period, setPeriod] = useState<Period>("today");
   const [selected, setSelected] = useState<Sale | null>(null);
 
@@ -104,10 +106,10 @@ export default function Reports() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label={`Sales · ${periodLabel}`} value={`$${revenue.toFixed(2)}`} icon={DollarSign} tone="primary" />
+        <StatCard label={`Sales · ${periodLabel}`} value={formatCurrency(revenue)} icon={DollarSign} tone="primary" />
         <StatCard label="Transactions" value={String(filteredSales.length)} icon={Receipt} tone="success" />
         <StatCard label="Items Sold" value={String(items)} icon={ShoppingBag} tone="warning" />
-        <StatCard label="Avg. Ticket" value={`$${avgTicket.toFixed(2)}`} icon={TrendingUp} tone="primary" />
+        <StatCard label="Avg. Ticket" value={formatCurrency(avgTicket)} icon={TrendingUp} tone="primary" />
       </div>
 
       <Card className="p-6 shadow-soft">
@@ -139,7 +141,7 @@ export default function Reports() {
                     borderRadius: 12,
                     boxShadow: "var(--shadow-lg)",
                   }}
-                  formatter={(v: number) => [`$${v.toFixed(2)}`, "Revenue"]}
+                  formatter={(v: number) => [formatCurrency(v), "Revenue"]}
                 />
                 <Bar dataKey="revenue" radius={[8, 8, 0, 0]}>
                   {topProducts.map((_, i) => (
@@ -166,7 +168,7 @@ export default function Reports() {
                     <p className="text-sm font-medium truncate">{p.name}</p>
                     <p className="text-xs text-muted-foreground">{p.qty} sold</p>
                   </div>
-                  <span className="text-sm font-semibold">${p.revenue.toFixed(2)}</span>
+                  <span className="text-sm font-semibold">{formatCurrency(p.revenue)}</span>
                 </li>
               ))}
             </ul>
@@ -201,7 +203,7 @@ export default function Reports() {
                         })}
                       </p>
                     </div>
-                    <span className="text-sm font-semibold">${s.total.toFixed(2)}</span>
+                    <span className="text-sm font-semibold">{formatCurrency(s.total)}</span>
                   </button>
                 </li>
               ))}

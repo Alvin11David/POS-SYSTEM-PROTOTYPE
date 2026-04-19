@@ -30,15 +30,30 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { usePos } from "@/store/posStore";
+import { useCurrency } from "@/store/currencyStore";
 import { Product } from "@/types/pos";
 import { toast } from "sonner";
 
 const MAX_IMAGE_SIZE = 1_500_000;
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
+
+const formatPriceInput = (value: string) => {
+  const cleaned = value.replace(/,/g, "").replace(/[^\d.]/g, "");
+  if (!cleaned) return "";
+
+  const [integerPart, ...decimalParts] = cleaned.split(".");
+  const integer = integerPart.replace(/^0+(\d)/, "$1") || "0";
+  const decimal = decimalParts.join("").slice(0, 2);
+
+  const formattedInteger = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+  }).format(Number(integer));
+
+  if (cleaned.includes(".")) {
+    return `${formattedInteger}.${decimal}`;
+  }
+
+  return formattedInteger;
+};
 
 async function fileToDataUrl(file: File): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -51,6 +66,7 @@ async function fileToDataUrl(file: File): Promise<string> {
 
 export default function Products() {
   const { products, addProduct, updateProduct, deleteProduct } = usePos();
+  const { formatCurrency, currency } = useCurrency();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [name, setName] = useState("");
@@ -74,7 +90,7 @@ export default function Products() {
   const openEdit = (p: Product) => {
     setEditing(p);
     setName(p.name);
-    setPrice(String(p.price));
+    setPrice(formatPriceInput(String(p.price)));
     setImageUrl(p.imageUrl ?? "");
     setOpen(true);
   };
@@ -101,7 +117,7 @@ export default function Products() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const priceNum = parseFloat(price);
+    const priceNum = parseFloat(price.replace(/,/g, ""));
     if (!name.trim() || isNaN(priceNum) || priceNum < 0) {
       toast.error("Please enter a valid name and price.");
       return;
@@ -196,7 +212,7 @@ export default function Products() {
               <div className="mt-4">
                 <h3 className="font-semibold truncate">{p.name}</h3>
                 <p className="text-lg font-bold text-primary mt-1">
-                  ${formatCurrency(p.price)}
+                  {formatCurrency(p.price)}
                 </p>
               </div>
               <div className="mt-4 flex gap-2 transition-base sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
@@ -279,14 +295,13 @@ export default function Products() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price ({currency})</Label>
               <Input
                 id="price"
-                type="number"
-                step="0.01"
-                min="0"
+                type="text"
+                inputMode="decimal"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(formatPriceInput(e.target.value))}
                 placeholder="0.00"
               />
             </div>

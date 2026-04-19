@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { PosProvider } from "@/store/posStore";
 import { PosExtraProvider } from "@/store/posExtraStore";
 import { AuthProvider } from "@/store/authStore";
+import { CurrencyProvider } from "@/store/currencyStore";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index.tsx";
@@ -106,13 +107,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
-        <PosProvider>
-          <PosExtraProvider>
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </PosExtraProvider>
-        </PosProvider>
+        <CurrencyProvider>
+          <PosProvider>
+            <PosExtraProvider>
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </PosExtraProvider>
+          </PosProvider>
+        </CurrencyProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

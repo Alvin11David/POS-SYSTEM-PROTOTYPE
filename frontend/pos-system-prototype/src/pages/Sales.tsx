@@ -14,19 +14,16 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { usePos } from "@/store/posStore";
+import { useCurrency } from "@/store/currencyStore";
 import { CartItem, Product, Sale } from "@/types/pos";
 import { toast } from "sonner";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 
 const TAX_RATE = 0.08;
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
 
 export default function Sales() {
   const { products, recordSale } = usePos();
+  const { formatCurrency } = useCurrency();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
@@ -138,7 +135,7 @@ export default function Sales() {
                   </div>
                   <p className="font-medium text-sm truncate">{p.name}</p>
                   <p className="text-primary font-bold mt-1">
-                    ${formatCurrency(p.price)}
+                    {formatCurrency(p.price)}
                   </p>
                 </button>
               ))}
@@ -195,8 +192,7 @@ export default function Sales() {
               </div>
               <p className="font-semibold">Sale completed!</p>
               <p className="text-xs text-muted-foreground mt-1">
-                #{success.id.slice(0, 6).toUpperCase()} · $
-                {formatCurrency(success.total)}
+                #{success.id.slice(0, 6).toUpperCase()} · {formatCurrency(success.total)}
               </p>
               <div className="mt-4 flex gap-2">
                 <Button
@@ -229,7 +225,7 @@ export default function Sales() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{item.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    ${formatCurrency(item.price)} each
+                    {formatCurrency(item.price)} each
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -271,15 +267,15 @@ export default function Sales() {
             <div className="space-y-2 py-4 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${formatCurrency(subtotal)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Tax (8%)</span>
-                <span>${formatCurrency(tax)}</span>
+                <span>{formatCurrency(tax)}</span>
               </div>
               <div className="flex justify-between text-base font-bold pt-1">
                 <span>Total</span>
-                <span>${formatCurrency(total)}</span>
+                <span>{formatCurrency(total)}</span>
               </div>
             </div>
             <Button
@@ -287,8 +283,7 @@ export default function Sales() {
               onClick={completeSale}
               className="w-full gap-2 shadow-glow transition-base hover:scale-[1.02] gradient-primary"
             >
-              <Check className="h-4 w-4" /> Complete Sale · $
-              {formatCurrency(total)}
+                <Check className="h-4 w-4" /> Complete Sale · {formatCurrency(total)}
             </Button>
           </>
         )}

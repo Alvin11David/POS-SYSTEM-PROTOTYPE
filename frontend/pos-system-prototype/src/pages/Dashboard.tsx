@@ -8,14 +8,14 @@ import { StatCard } from "@/components/StatCard";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 import { usePos } from "@/store/posStore";
 import { useAuth } from "@/store/authStore";
+import { useCurrency } from "@/store/currencyStore";
 import { Sale } from "@/types/pos";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
-const formatCurrency = (n: number) => `$${n.toFixed(2)}`;
 
 export default function Dashboard() {
   const { sales } = usePos();
   const { currentUser } = useAuth();
+  const { formatCurrency } = useCurrency();
   const navigate = useNavigate();
   const [selected, setSelected] = useState<Sale | null>(null);
   const firstName = (currentUser?.fullName || currentUser?.username || "there").split(" ")[0];
@@ -108,7 +108,7 @@ export default function Dashboard() {
                     boxShadow: "var(--shadow-lg)",
                   }}
                   labelStyle={{ color: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  formatter={(v: number) => [`$${v}`, "Sales"]}
+                  formatter={(v: number) => [formatCurrency(v), "Sales"]}
                 />
                 <Area
                   type="monotone"

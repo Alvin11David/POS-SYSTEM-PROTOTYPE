@@ -21,6 +21,7 @@ import {
 import { Download, FileText, Printer, Search } from "lucide-react";
 import { usePos } from "@/store/posStore";
 import { useAuth } from "@/store/authStore";
+import { useCurrency } from "@/store/currencyStore";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 import { Sale } from "@/types/pos";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ import { toast } from "sonner";
 export default function SalesReport() {
   const { sales } = usePos();
   const { users } = useAuth();
+  const { formatCurrency } = useCurrency();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [cashier, setCashier] = useState("All");
@@ -179,7 +181,7 @@ export default function SalesReport() {
         </Card>
         <Card className="p-4 shadow-soft">
           <p className="text-xs text-muted-foreground">Total revenue</p>
-          <p className="text-2xl font-bold mt-1">${totals.sum.toFixed(2)}</p>
+          <p className="text-2xl font-bold mt-1">{formatCurrency(totals.sum)}</p>
         </Card>
       </div>
 
@@ -217,9 +219,9 @@ export default function SalesReport() {
                     <TableCell className="text-muted-foreground">
                       {s.items.reduce((a, i) => a + i.quantity, 0)} item(s)
                     </TableCell>
-                    <TableCell className="text-right">${s.total.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(s.total)}</TableCell>
                     <TableCell className="text-right font-semibold">
-                      ${s.total.toFixed(2)}
+                      {formatCurrency(s.total)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button size="sm" variant="outline" onClick={() => setSelected(s)}>
