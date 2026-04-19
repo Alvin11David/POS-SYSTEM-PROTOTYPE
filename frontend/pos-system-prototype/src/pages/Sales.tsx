@@ -91,11 +91,14 @@ export default function Sales() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-[1500px] mx-auto lg:h-[calc(100vh-7rem)]">
+    <div
+      className="grid gap-6 lg:grid-cols-[1fr_380px] max-w-375 mx-auto lg:h-[calc(100vh-7rem)]"
+      data-tour="sales-screen"
+    >
       {/* Products */}
       <div className="flex flex-col min-h-0">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-50">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
@@ -204,7 +207,7 @@ export default function Sales() {
                 <ShoppingCart className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="text-sm font-medium">Cart is empty</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[220px]">
+              <p className="text-xs text-muted-foreground mt-1 max-w-55">
                 Tap a product to add it to the order.
               </p>
             </div>

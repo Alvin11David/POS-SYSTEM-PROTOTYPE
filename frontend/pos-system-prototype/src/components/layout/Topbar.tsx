@@ -101,6 +101,7 @@ export function Topbar() {
       <Popover open={open && query.length > 0} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div
+            data-tour="topbar-search"
             className={cn(
               "relative hidden min-w-0 flex-1 md:ml-6",
               isDesktopSidebarExpanded

@@ -108,7 +108,7 @@ export default function Reports() {
   ];
 
   return (
-    <div className="space-y-6 max-w-375 mx-auto">
+    <div className="space-y-6 max-w-375 mx-auto" data-tour="reports-screen">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">

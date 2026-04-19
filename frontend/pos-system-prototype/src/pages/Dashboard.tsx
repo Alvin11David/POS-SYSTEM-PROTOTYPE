@@ -67,7 +67,10 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 max-w-375 mx-auto">
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/60 bg-linear-to-br from-primary via-primary to-primary-glow p-5 sm:p-6 md:p-8 shadow-glow-lg">
+      <div
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/60 bg-linear-to-br from-primary via-primary to-primary-glow p-5 sm:p-6 md:p-8 shadow-glow-lg"
+        data-tour="dashboard-hero"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(0_0%_100%/0.2),transparent_50%)]" />
         <div className="absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute top-10 right-32 h-32 w-32 rounded-full bg-white/5 blur-2xl hidden sm:block" />
@@ -97,7 +100,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        data-tour="dashboard-stats"
+      >
         <StatCard
           label="Sales Today"
           value={formatCurrency(todayRevenue)}

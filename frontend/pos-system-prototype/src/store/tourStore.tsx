@@ -60,9 +60,10 @@ const STEPS: TourStep[] = [
   },
   {
     route: "/sales",
+    selector: "[data-tour='sales-screen']",
     title: "The Sales screen",
     body: "This is where you'll spend most of your day. Tap products to add them to the cart on the right.",
-    placement: "center",
+    placement: "top",
   },
   {
     route: "/products",
@@ -87,15 +88,17 @@ const STEPS: TourStep[] = [
   },
   {
     route: "/reports",
+    selector: "[data-tour='reports-screen']",
     title: "Reports & insights",
     body: "Track revenue, top sellers and trends over time. Switch periods or export data as CSV.",
-    placement: "center",
+    placement: "top",
   },
   {
     route: "/guide",
+    selector: "[data-tour='guide-hero']",
     title: "You're all set 🎉",
     body: "The full written guide lives here. Replay this tour anytime from the Dashboard. Happy selling!",
-    placement: "center",
+    placement: "bottom",
   },
 ];
 

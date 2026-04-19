@@ -30,7 +30,15 @@ const sections = [
   { id: "faq", title: "FAQ", icon: LifeBuoy },
 ];
 
-function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+function Step({
+  n,
+  title,
+  children,
+}: {
+  n: number;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex gap-4">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full gradient-primary text-sm font-bold text-primary-foreground shadow-glow">
@@ -38,7 +46,9 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
       </div>
       <div className="flex-1 pt-0.5">
         <p className="font-semibold">{title}</p>
-        <div className="mt-1 text-sm text-muted-foreground space-y-1">{children}</div>
+        <div className="mt-1 text-sm text-muted-foreground space-y-1">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -65,7 +75,9 @@ function Section({
         </div>
         <div>
           <h2 className="text-xl font-bold tracking-tight">{title}</h2>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          )}
         </div>
       </div>
       <Card className="p-6 shadow-sm">{children}</Card>
@@ -77,7 +89,10 @@ export default function Guide() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl gradient-primary p-8 sm:p-10 text-primary-foreground shadow-elevated">
+      <div
+        className="relative overflow-hidden rounded-3xl gradient-primary p-8 sm:p-10 text-primary-foreground shadow-elevated"
+        data-tour="guide-hero"
+      >
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="relative max-w-2xl space-y-4">
@@ -88,7 +103,8 @@ export default function Guide() {
             Everything you need to run Jambo POS like a pro.
           </h1>
           <p className="text-primary-foreground/85">
-            A friendly, no-jargon walkthrough — from your first login to closing out the day.
+            A friendly, no-jargon walkthrough — from your first login to closing
+            out the day.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Button asChild variant="secondary" className="gap-2">
@@ -96,7 +112,11 @@ export default function Guide() {
                 <Download className="h-4 w-4" /> Download PDF
               </a>
             </Button>
-            <Button asChild variant="outline" className="gap-2 bg-transparent border-white/30 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2 bg-transparent border-white/30 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground"
+            >
               <Link to="/sales">
                 <ShoppingCart className="h-4 w-4" /> Open POS
               </Link>
@@ -139,17 +159,20 @@ export default function Guide() {
               <Step n={1} title="Sign in">
                 Go to the Login screen and use the default admin —
                 <span className="font-mono"> admin</span> /{" "}
-                <span className="font-mono">admin123</span>. Change the password right after.
+                <span className="font-mono">admin123</span>. Change the password
+                right after.
               </Step>
               <Step n={2} title="Add your products">
-                Open <b>Products</b>, click <b>Add product</b>, enter a name, price and emoji.
+                Open <b>Products</b>, click <b>Add product</b>, enter a name,
+                price and emoji.
               </Step>
               <Step n={3} title="Run your first sale">
-                Open <b>Sales</b>, tap products to fill the cart, then hit <b>Complete sale</b>.
-                Print or share the receipt.
+                Open <b>Sales</b>, tap products to fill the cart, then hit{" "}
+                <b>Complete sale</b>. Print or share the receipt.
               </Step>
               <Step n={4} title="Invite your team">
-                Open <b>Staff</b> and create a username + password for each person. Pick a role.
+                Open <b>Staff</b> and create a username + password for each
+                person. Pick a role.
               </Step>
             </div>
           </Section>
@@ -165,7 +188,12 @@ export default function Guide() {
                 {
                   name: "Admin",
                   color: "bg-primary/10 text-primary border-primary/20",
-                  perms: ["Manage staff", "Manage products", "Run sales", "View reports"],
+                  perms: [
+                    "Manage staff",
+                    "Manage products",
+                    "Run sales",
+                    "View reports",
+                  ],
                 },
                 {
                   name: "Manager",
@@ -178,7 +206,10 @@ export default function Guide() {
                   perms: ["Run sales", "Print receipts"],
                 },
               ].map((r) => (
-                <div key={r.name} className={`rounded-2xl border p-4 ${r.color}`}>
+                <div
+                  key={r.name}
+                  className={`rounded-2xl border p-4 ${r.color}`}
+                >
                   <p className="font-semibold">{r.name}</p>
                   <ul className="mt-3 space-y-1.5 text-xs text-foreground/80">
                     {r.perms.map((p) => (
@@ -204,14 +235,15 @@ export default function Guide() {
                 Only Admins see this. It's in the sidebar under Workspace.
               </Step>
               <Step n={2} title="Click 'Add staff member'">
-                Enter their full name, a username (e.g. <span className="font-mono">jane</span>),
-                and a password.
+                Enter their full name, a username (e.g.{" "}
+                <span className="font-mono">jane</span>), and a password.
               </Step>
               <Step n={3} title="Pick a role">
                 Choose Admin, Manager or Cashier. You can change it later.
               </Step>
               <Step n={4} title="Share the credentials">
-                Hand the username and password to your teammate — they're ready to sign in.
+                Hand the username and password to your teammate — they're ready
+                to sign in.
               </Step>
             </div>
           </Section>
@@ -223,9 +255,27 @@ export default function Guide() {
             subtitle="Your catalog, organized and searchable."
           >
             <ul className="space-y-3 text-sm">
-              <li className="flex gap-3"><LayoutDashboard className="h-4 w-4 mt-0.5 text-primary" /><span><b>Add</b> — set name, price, category and emoji to make items easy to spot.</span></li>
-              <li className="flex gap-3"><Search className="h-4 w-4 mt-0.5 text-primary" /><span><b>Search</b> — filter your grid instantly with the search box.</span></li>
-              <li className="flex gap-3"><Boxes className="h-4 w-4 mt-0.5 text-primary" /><span><b>Edit & delete</b> — hover any product card for quick actions.</span></li>
+              <li className="flex gap-3">
+                <LayoutDashboard className="h-4 w-4 mt-0.5 text-primary" />
+                <span>
+                  <b>Add</b> — set name, price, category and emoji to make items
+                  easy to spot.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <Search className="h-4 w-4 mt-0.5 text-primary" />
+                <span>
+                  <b>Search</b> — filter your grid instantly with the search
+                  box.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <Boxes className="h-4 w-4 mt-0.5 text-primary" />
+                <span>
+                  <b>Edit & delete</b> — hover any product card for quick
+                  actions.
+                </span>
+              </li>
             </ul>
           </Section>
 
@@ -243,10 +293,12 @@ export default function Guide() {
                 Use + / − to set quantities. Remove items with the trash icon.
               </Step>
               <Step n={3} title="Complete the sale">
-                Hit the highlighted <b>Complete sale</b> button. Tax (8%) is added automatically.
+                Hit the highlighted <b>Complete sale</b> button. Tax (8%) is
+                added automatically.
               </Step>
               <Step n={4} title="Print or share the receipt">
-                The receipt opens instantly — print it, or click <b>New order</b> to keep going.
+                The receipt opens instantly — print it, or click{" "}
+                <b>New order</b> to keep going.
               </Step>
             </div>
           </Section>
@@ -258,9 +310,23 @@ export default function Guide() {
             subtitle="Know what's selling — and what isn't."
           >
             <ul className="space-y-3 text-sm">
-              <li className="flex gap-3"><Receipt className="h-4 w-4 mt-0.5 text-primary" /><span>Switch between <b>Today</b>, <b>7 days</b>, and <b>All time</b>.</span></li>
-              <li className="flex gap-3"><BarChart3 className="h-4 w-4 mt-0.5 text-primary" /><span>See your top-selling products at a glance.</span></li>
-              <li className="flex gap-3"><Download className="h-4 w-4 mt-0.5 text-primary" /><span>Export sales as <b>CSV</b> for your accountant.</span></li>
+              <li className="flex gap-3">
+                <Receipt className="h-4 w-4 mt-0.5 text-primary" />
+                <span>
+                  Switch between <b>Today</b>, <b>7 days</b>, and{" "}
+                  <b>All time</b>.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <BarChart3 className="h-4 w-4 mt-0.5 text-primary" />
+                <span>See your top-selling products at a glance.</span>
+              </li>
+              <li className="flex gap-3">
+                <Download className="h-4 w-4 mt-0.5 text-primary" />
+                <span>
+                  Export sales as <b>CSV</b> for your accountant.
+                </span>
+              </li>
             </ul>
           </Section>
 
@@ -277,7 +343,10 @@ export default function Guide() {
                 { k: "Use emojis on products", v: "Easier to scan visually" },
                 { k: "Categories", v: "Group by Drinks / Food / Bakery..." },
               ].map((s) => (
-                <div key={s.k} className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
+                <div
+                  key={s.k}
+                  className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3"
+                >
                   <span className="text-sm text-muted-foreground">{s.v}</span>
                   <kbd className="rounded-md border border-border bg-background px-2 py-1 font-mono text-xs">
                     {s.k}
@@ -297,29 +366,35 @@ export default function Guide() {
               <div>
                 <p className="font-semibold">I forgot my password.</p>
                 <p className="text-muted-foreground">
-                  Ask an Admin to open <b>Staff</b>, edit your account, and set a new password.
+                  Ask an Admin to open <b>Staff</b>, edit your account, and set
+                  a new password.
                 </p>
               </div>
               <div>
                 <p className="font-semibold">Where is my data stored?</p>
                 <p className="text-muted-foreground">
-                  In this browser (local storage). For multi-device sync, ask us about enabling
-                  Lovable Cloud.
+                  In this browser (local storage). For multi-device sync, ask us
+                  about enabling Lovable Cloud.
                 </p>
               </div>
               <div>
                 <p className="font-semibold">Can I delete the default admin?</p>
                 <p className="text-muted-foreground">
-                  Create another admin first, sign in as them, then remove the original.
+                  Create another admin first, sign in as them, then remove the
+                  original.
                 </p>
               </div>
             </div>
           </Section>
 
-          <div className="rounded-2xl border border-border bg-gradient-to-br from-primary-soft to-background p-6 text-center">
+          <div className="rounded-2xl border border-border bg-linear-to-br from-primary-soft to-background p-6 text-center">
             <Sparkles className="mx-auto h-6 w-6 text-primary" />
-            <p className="mt-2 font-semibold">That's it — you're ready to sell.</p>
-            <p className="text-sm text-muted-foreground">Print this guide for your team or keep it open while training.</p>
+            <p className="mt-2 font-semibold">
+              That's it — you're ready to sell.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Print this guide for your team or keep it open while training.
+            </p>
             <Button asChild className="mt-4 gap-2 shadow-glow">
               <a href="/jambo-pos-user-guide.pdf" download>
                 <Download className="h-4 w-4" /> Download the PDF
