@@ -154,11 +154,11 @@ export default function Dashboard() {
               </span>
             </div>
             <Button
-              onClick={() => navigate("/sales")}
+              onClick={() => navigate("/products")}
               size="lg"
               className="h-11 gap-2 rounded-xl bg-white font-semibold text-slate-900 shadow-lg transition-spring hover:scale-[1.02] hover:bg-white/95"
             >
-              <Plus className="h-4 w-4" /> Start New Sale
+              <Plus className="h-4 w-4" /> New Product
             </Button>
             <Button
               onClick={() => navigate("/reports")}
