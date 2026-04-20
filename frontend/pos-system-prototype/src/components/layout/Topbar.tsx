@@ -7,8 +7,11 @@ import {
   Search,
   Settings,
   ShoppingCart,
+  ArrowRight,
+  Trash2,
 } from "lucide-react";
 import { ROLE_LABEL, useAuth } from "@/store/authStore";
+import { useNotification } from "@/store/notificationStore";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,6 +42,13 @@ export function Topbar() {
   const { products, sales } = usePos();
   const { formatCurrency } = useCurrency();
   const { currentUser, logout } = useAuth();
+  const {
+    notifications,
+    unreadCount,
+    fetchNotifications,
+    deleteNotification,
+    markAsRead,
+  } = useNotification();
   const initials = (currentUser?.fullName || currentUser?.username || "U")
     .split(" ")
     .map((s) => s[0])
@@ -50,6 +60,11 @@ export function Topbar() {
   const [pwdOpen, setPwdOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const isDesktopSidebarExpanded = !isMobile && state === "expanded";
+
+  // Fetch notifications on mount
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   // Cmd/Ctrl + K focuses search
   useEffect(() => {
@@ -80,19 +95,19 @@ export function Topbar() {
     };
   }, [query, products, sales]);
 
-  const notifications = useMemo(
-    () =>
-      sales.slice(0, 4).map((s) => ({
-        id: s.id,
-        title: `Sale #${s.id.slice(0, 6).toUpperCase()}`,
-        body: `${formatCurrency(s.total)} · ${s.items.reduce((a, i) => a + i.quantity, 0)} items`,
-        time: new Date(s.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      })),
-    [sales, formatCurrency],
-  );
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "success":
+        return "🟢";
+      case "error":
+        return "🔴";
+      case "warning":
+        return "🟡";
+      case "info":
+      default:
+        return "🔵";
+    }
+  };
 
   return (
     <header
@@ -210,43 +225,75 @@ export function Topbar() {
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />
-              {notifications.length > 0 && (
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
               )}
             </Button>
           </PopoverTrigger>
           <PopoverContent
             align="end"
-            className="w-[calc(100vw-2rem)] max-w-80 p-0"
+            className="w-[calc(100vw-2rem)] max-w-96 p-0"
           >
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
               <p className="text-sm font-semibold">Notifications</p>
-              <span className="text-xs text-muted-foreground">
-                {notifications.length} new
-              </span>
+              {unreadCount > 0 && (
+                <span className="rounded-full bg-primary/20 px-2 py-0.5 text-xs font-semibold text-primary">
+                  {unreadCount} unread
+                </span>
+              )}
             </div>
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-96 overflow-y-auto">
               {notifications.length === 0 ? (
-                <p className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  You're all caught up
-                </p>
+                <div className="px-4 py-8 text-center">
+                  <Bell className="mx-auto h-8 w-8 text-muted-foreground/40 mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    You're all caught up
+                  </p>
+                </div>
               ) : (
-                notifications.map((n) => (
-                  <button
-                    key={n.id}
-                    onClick={() => navigate("/reports")}
-                    className="flex w-full items-start gap-3 border-b border-border/60 px-4 py-3 text-left last:border-0 transition-base hover:bg-accent"
-                  >
-                    <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{n.title}</p>
-                      <p className="text-xs text-muted-foreground">{n.body}</p>
+                <>
+                  {notifications.slice(0, 5).map((n) => (
+                    <div
+                      key={n.id}
+                      className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 transition-base hover:bg-accent/40 group ${
+                        !n.isRead ? "bg-primary/5" : ""
+                      }`}
+                    >
+                      <span className="mt-1 text-lg">
+                        {getNotificationIcon(n.type)}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold">{n.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {n.message}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          {new Date(n.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deleteNotification(n.id)}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity rounded p-1 hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                      </button>
                     </div>
-                    <span className="text-[11px] text-muted-foreground">
-                      {n.time}
-                    </span>
-                  </button>
-                ))
+                  ))}
+                  {notifications.length > 5 && (
+                    <button
+                      onClick={() => navigate("/notifications")}
+                      className="flex w-full items-center justify-center gap-2 border-t border-border/60 px-4 py-2.5 text-sm font-semibold text-primary transition-base hover:bg-accent/60"
+                    >
+                      View all notifications
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </PopoverContent>

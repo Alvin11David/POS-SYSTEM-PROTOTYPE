@@ -8,7 +8,7 @@ import {
   Info,
   AlertTriangle,
   Trash2,
-  CheckAll,
+  Check,
   Bell,
   BellOff,
 } from "lucide-react";
@@ -73,7 +73,10 @@ export default function Notifications() {
   };
 
   return (
-    <div className="relative mx-auto max-w-375 space-y-6" data-tour="notifications-screen">
+    <div
+      className="relative mx-auto max-w-375 space-y-6"
+      data-tour="notifications-screen"
+    >
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-96 overflow-hidden rounded-4xl">
         <div className="absolute inset-0 bg-[radial-gradient(40%_50%_at_30%_35%,hsl(var(--primary)/0.14),transparent_58%),radial-gradient(35%_45%_at_85%_20%,hsl(var(--success)/0.16),transparent_65%)]" />
       </div>
@@ -91,7 +94,8 @@ export default function Notifications() {
               Notifications
             </h1>
             <p className="mt-2 max-w-md text-sm text-white/80">
-              Stay updated with system alerts, order updates, and important events.
+              Stay updated with system alerts, order updates, and important
+              events.
             </p>
           </div>
 
@@ -103,7 +107,7 @@ export default function Notifications() {
                   variant="outline"
                   className="gap-2 border-white/25 bg-white/10 text-white hover:bg-white/20 font-semibold rounded-xl"
                 >
-                  <CheckAll className="h-4 w-4" /> Mark all read
+                  <Check className="h-4 w-4" /> Mark all read
                 </Button>
                 <Button
                   onClick={deleteAllNotifications}
@@ -121,7 +125,9 @@ export default function Notifications() {
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-flex h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
-          <p className="mt-4 text-sm text-muted-foreground">Loading notifications...</p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Loading notifications...
+          </p>
         </div>
       ) : notifications.length === 0 ? (
         <Card className="border-border/60 bg-linear-to-b from-card to-background/40 p-12 text-center shadow-soft">
@@ -140,7 +146,10 @@ export default function Notifications() {
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold">
                   You have{" "}
-                  <span className="text-primary">{unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}</span>
+                  <span className="text-primary">
+                    {unreadCount} unread notification
+                    {unreadCount !== 1 ? "s" : ""}
+                  </span>
                 </p>
                 <Button
                   onClick={markAllAsRead}
@@ -185,7 +194,9 @@ export default function Notifications() {
 
                     <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-2">
-                        <Badge className={`rounded-full border-0 px-2 py-0.5 text-xs font-semibold ${getTypeColor(notification.type)}`}>
+                        <Badge
+                          className={`rounded-full border-0 px-2 py-0.5 text-xs font-semibold ${getTypeColor(notification.type)}`}
+                        >
                           {notification.type}
                         </Badge>
                         <p className="text-xs text-muted-foreground">

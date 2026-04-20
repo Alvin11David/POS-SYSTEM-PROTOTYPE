@@ -6,6 +6,7 @@ import {
   Sparkles,
   Users,
   BookOpen,
+  Bell,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import jamboLogo from "@/assets/images/Jambo-logo.webp";
@@ -52,6 +53,7 @@ const adminItems: NavItem[] = [
 ];
 
 const helpItems: NavItem[] = [
+  { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "User Guide", url: "/guide", icon: BookOpen },
 ];
 

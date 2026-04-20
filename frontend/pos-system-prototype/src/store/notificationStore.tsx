@@ -26,7 +26,11 @@ const NotificationContext = createContext<NotificationStore | undefined>(
   undefined,
 );
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+export function NotificationProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -48,19 +52,22 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  const markAsRead = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/notifications/${id}/`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isRead: true }),
-      });
-      if (!res.ok) throw new Error("Failed to update notification");
-      await fetchNotifications();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    }
-  }, [fetchNotifications]);
+  const markAsRead = useCallback(
+    async (id: string) => {
+      try {
+        const res = await fetch(`/api/notifications/${id}/`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isRead: true }),
+        });
+        if (!res.ok) throw new Error("Failed to update notification");
+        await fetchNotifications();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      }
+    },
+    [fetchNotifications],
+  );
 
   const markAllAsRead = useCallback(async () => {
     try {
@@ -73,7 +80,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   const deleteNotification = useCallback(async (id: string) => {
     try {
-      const res = await fetch(`/api/notifications/${id}/`, { method: "DELETE" });
+      const res = await fetch(`/api/notifications/${id}/`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete notification");
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setUnreadCount((prev) => Math.max(0, prev - 1));
