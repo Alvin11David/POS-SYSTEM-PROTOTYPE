@@ -111,7 +111,11 @@ export function Topbar() {
 
   return (
     <header
-      className="sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl sm:gap-3 sm:px-4"
+      className={cn(
+        "sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl transition-[transform,padding,border-radius,margin,box-shadow] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:gap-3 sm:px-4",
+        isDesktopSidebarExpanded &&
+          "md:mx-1.5 md:mt-1.5 md:rounded-xl md:border md:border-border/70 md:bg-background/85 md:px-4 md:shadow-sm",
+      )}
       data-tour="topbar"
     >
       <SidebarTrigger
@@ -124,10 +128,10 @@ export function Topbar() {
           <div
             data-tour="topbar-search"
             className={cn(
-              "relative hidden min-w-0 flex-1 md:ml-1",
+              "relative hidden min-w-0 flex-1 transition-[transform,margin] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] md:block md:max-w-sm lg:max-w-md",
               isDesktopSidebarExpanded
-                ? "md:block md:max-w-none"
-                : "md:block md:max-w-sm lg:max-w-md",
+                ? "md:ml-0 md:-translate-x-3"
+                : "md:ml-1 md:translate-x-0",
             )}
           >
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
