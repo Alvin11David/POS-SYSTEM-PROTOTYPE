@@ -82,12 +82,16 @@ export default function Reports() {
       return;
     }
     const rows = [
-      ["Sale ID", "Date", "Items", "Total"],
+      ["Sale ID", "Date", "Items", "Total", "Client Name", "Client Phone", "Sold By", "Notes"],
       ...filteredSales.map((s) => [
         s.id,
         new Date(s.createdAt).toISOString(),
         s.items.map((i) => `${i.quantity}x ${i.name}`).join("; "),
         s.total.toFixed(2),
+        s.clientName || "",
+        s.clientPhone || "",
+        s.soldBy || "",
+        s.notes || "",
       ]),
     ];
     const csv = rows
@@ -362,16 +366,31 @@ export default function Reports() {
                     className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-background/60 p-2.5 text-left transition-base hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm"
                   >
                     <div>
-                      <p className="text-sm font-semibold">
-                        #{s.id.slice(0, 6).toUpperCase()}
-                      </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {new Date(s.createdAt).toLocaleString([], {
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold">
+                          #{s.id.slice(0, 6).toUpperCase()}
+                        </p>
+                        {s.clientName && (
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                            {s.clientName}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground flex items-center gap-2">
+                        <span>
+                          {new Date(s.createdAt).toLocaleString([], {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        {s.soldBy && (
+                          <>
+                            <span className="hidden sm:inline">·</span>
+                            <span className="hidden sm:inline italic">By: {s.soldBy}</span>
+                          </>
+                        )}
                       </p>
                     </div>
                     <span className="text-sm font-extrabold text-primary">

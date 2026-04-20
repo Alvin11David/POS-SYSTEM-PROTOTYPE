@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -21,12 +22,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { usePos } from "@/store/posStore";
+import { useAuth } from "@/store/authStore";
 import { useCurrency } from "@/store/currencyStore";
 import { CartItem, Product, Sale } from "@/types/pos";
 import { toast } from "sonner";
 import { ReceiptDialog } from "@/components/ReceiptDialog";
 
 export default function Sales() {
+  const { currentUser } = useAuth();
   const { products, recordSale } = usePos();
   const { formatCurrency, taxRate } = useCurrency();
   const [previewImage, setPreviewImage] = useState<{
@@ -38,6 +41,9 @@ export default function Sales() {
   const [category, setCategory] = useState<string>("All");
   const [success, setSuccess] = useState<Sale | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [orderNotes, setOrderNotes] = useState("");
 
   const categories = useMemo(() => {
     const set = new Set(products.map((p) => p.category ?? "Other"));
@@ -80,15 +86,22 @@ export default function Sales() {
 
   const completeSale = () => {
     if (cart.length === 0) return;
-    const sale: Sale = {
+    const sale = {
       id: crypto.randomUUID(),
       items: cart,
       total,
       createdAt: new Date().toISOString(),
-    };
+      clientName,
+      clientPhone,
+      soldBy: currentUser?.fullName || currentUser?.username || "System",
+      notes: orderNotes,
+    } as Sale;
     recordSale(sale);
     setSuccess(sale);
     setCart([]);
+    setClientName("");
+    setClientPhone("");
+    setOrderNotes("");
     toast.success("Sale completed!");
   };
 
@@ -253,6 +266,50 @@ export default function Sales() {
                 Clear
               </Button>
             )}
+          </div>
+
+          <Separator />
+
+          <div className="my-4 space-y-3 px-1">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Client Name</Label>
+                <Input
+                  className="h-8 text-xs"
+                  placeholder="Optional..."
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Client Contact</Label>
+                <Input
+                  className="h-8 text-xs"
+                  placeholder="Phone or Email..."
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Sold By</Label>
+                <Input
+                  className="h-8 text-xs bg-muted/50 cursor-not-allowed"
+                  readOnly
+                  value={currentUser?.fullName || currentUser?.username || "System User"}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-muted-foreground">Additional Notes</Label>
+                <Input
+                  className="h-8 text-xs"
+                  placeholder="Order notes..."
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           <Separator />

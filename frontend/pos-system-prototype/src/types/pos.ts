@@ -16,4 +16,8 @@ export interface Sale {
   items: CartItem[];
   total: number;
   createdAt: string;
+  clientName?: string;
+  clientPhone?: string;
+  soldBy?: string;
+  notes?: string;
 }

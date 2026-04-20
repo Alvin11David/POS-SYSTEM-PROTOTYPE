@@ -82,7 +82,36 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
             </div>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground pt-2">
+          {(sale.clientName || sale.clientPhone || sale.soldBy || sale.notes) && (
+            <>
+              <Separator />
+              <div className="space-y-1 text-xs text-muted-foreground">
+                {sale.clientName && (
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-semibold">Client:</span>
+                    <span>
+                      {sale.clientName}{" "}
+                      {sale.clientPhone && `(${sale.clientPhone})`}
+                    </span>
+                  </div>
+                )}
+                {sale.soldBy && (
+                  <div className="flex flex-col gap-0.5 mt-1.5">
+                    <span className="font-semibold">Served By:</span>
+                    <span>{sale.soldBy}</span>
+                  </div>
+                )}
+                {sale.notes && (
+                  <div className="flex flex-col gap-0.5 mt-1.5 break-words">
+                    <span className="font-semibold">Notes:</span>
+                    <span className="italic">"{sale.notes}"</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          <p className="text-center text-xs text-muted-foreground pt-2 mt-4">
             Thank you for your purchase! 💜
           </p>
         </div>
