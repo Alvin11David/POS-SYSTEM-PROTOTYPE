@@ -74,6 +74,10 @@ const empty: FormState = {
   role: "cashier",
 };
 
+function normalizeFirstName(value: string) {
+  return value.trim().split(/\s+/)[0] ?? "";
+}
+
 export default function Staff() {
   const { users, addUser, updateUser, deleteUser, currentUser } = useAuth();
   const {
@@ -122,23 +126,34 @@ export default function Staff() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const firstName = normalizeFirstName(form.fullName);
+    if (!firstName) {
+      toast.error("First name is required");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      fullName: firstName,
+    };
+
     if (editing) {
-      const res = await updateUser(editing.id, form);
+      const res = await updateUser(editing.id, payload);
       if (!res.ok) {
         toast.error(res.error ?? "Could not update user");
         return;
       }
-      toast.success(`${form.fullName || form.username} updated`);
+      toast.success(`${payload.fullName || payload.username} updated`);
       setOpen(false);
       return;
     }
-    const res = await addUser(form);
+    const res = await addUser(payload);
     if (!res.ok) {
       toast.error(res.error ?? "Could not add user");
       return;
     }
     toast.success(
-      `${form.fullName || form.username} added as ${ROLE_LABEL[form.role]}`,
+      `${payload.fullName || payload.username} added as ${ROLE_LABEL[payload.role]}`,
     );
     setOpen(false);
   };
@@ -390,17 +405,19 @@ export default function Staff() {
               {editing ? "Edit staff member" : "Add staff member"}
             </DialogTitle>
             <DialogDescription>
-              They'll sign in with the username & password you set here.
+              Set their first name, then create the username and password they
+              will use to sign in.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
+              <Label htmlFor="fullName">First name</Label>
               <Input
                 id="fullName"
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                placeholder="Jane Doe"
+                placeholder="Jane"
+                required
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

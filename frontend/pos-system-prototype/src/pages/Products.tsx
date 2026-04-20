@@ -5,6 +5,7 @@ import {
   Search,
   Trash2,
   Package as PackageIcon,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -149,58 +150,81 @@ export default function Products() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto" data-tour="products-page">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Products
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your inventory and pricing.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            onClick={start}
-            className="gap-2 transition-base hover:scale-[1.02]"
-            data-tour="products-tour-start"
-          >
-            <PackageIcon className="h-4 w-4" /> Tour
-          </Button>
-          <Button
-            onClick={openNew}
-            className="gap-2 shadow-glow transition-base hover:scale-[1.02]"
-            data-tour="products-add"
-          >
-            <Plus className="h-4 w-4" /> Add Product
-          </Button>
+    <div
+      className="relative mx-auto max-w-375 space-y-6"
+      data-tour="products-page"
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-96 overflow-hidden rounded-4xl">
+        <div className="absolute inset-0 bg-[radial-gradient(40%_50%_at_30%_35%,hsl(var(--primary)/0.14),transparent_58%),radial-gradient(35%_45%_at_85%_20%,hsl(var(--success)/0.16),transparent_65%)]" />
+      </div>
+
+      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-linear-to-br from-slate-900 via-slate-900 to-primary/75 p-5 text-primary-foreground shadow-elevated sm:p-6">
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,hsl(0_0%_100%/0.15),transparent_40%)]" />
+        <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-success/20 blur-3xl" />
+
+        <div className="relative grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/70">
+              Inventory Management
+            </p>
+            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">
+              Product Catalog
+            </h1>
+            <p className="mt-2 max-w-md text-sm text-white/80">
+              Add, edit, and organize your inventory. Control pricing and images
+              across all sales channels.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2 sm:flex-col">
+            <Button
+              variant="outline"
+              onClick={start}
+              className="gap-2 border-white/25 bg-white/10 text-white hover:bg-white/20"
+              data-tour="products-tour-start"
+            >
+              <Sparkles className="h-4 w-4" /> Tour
+            </Button>
+            <Button
+              onClick={openNew}
+              className="gap-2 rounded-xl bg-white text-slate-900 font-semibold shadow-lg hover:bg-white/95"
+              data-tour="products-add"
+            >
+              <Plus className="h-4 w-4" /> Add Product
+            </Button>
+          </div>
         </div>
       </div>
 
-      <Card className="p-4 shadow-soft" data-tour="products-search">
+      <Card
+        className="border-border/60 bg-linear-to-b from-card to-background/40 p-4 shadow-soft sm:p-5 animate-fade-in"
+        data-tour="products-search"
+      >
         <div className="relative max-w-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products..."
-            className="pl-9"
+            className="border-border/70 bg-background/80 pl-9"
           />
         </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {filtered.length} of {products.length} products
+        </p>
       </Card>
 
       {filtered.length === 0 ? (
         <Card
-          className="p-12 text-center shadow-soft"
+          className="p-12 text-center shadow-soft animate-fade-in"
           data-tour="products-empty"
         >
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-soft text-primary">
             <PackageIcon className="h-6 w-6" />
           </div>
-          <h3 className="mt-4 font-semibold">No products yet</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Add your first product to get started.
+          <h3 className="mt-4 text-lg font-semibold">Your catalog is empty</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Add your first product to get started building your inventory.
           </p>
           <Button onClick={openNew} className="mt-5 gap-2">
             <Plus className="h-4 w-4" /> Add Product
@@ -208,24 +232,31 @@ export default function Products() {
         </Card>
       ) : (
         <div
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in"
           data-tour="products-grid"
         >
           {filtered.map((p) => (
             <Card
               key={p.id}
-              className="group p-5 shadow-soft transition-base hover:shadow-elevated hover:-translate-y-0.5 animate-scale-in"
+              className="group relative overflow-hidden border-border/70 bg-linear-to-b from-card to-background/60 p-5 shadow-soft transition-base hover:-translate-y-0.5 hover:shadow-elevated animate-scale-in"
             >
-              <div className="flex items-start justify-between">
+              <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-primary/10 blur-2xl opacity-0 transition-base group-hover:opacity-100" />
+
+              <div className="relative flex items-start justify-between">
                 <button
                   type="button"
-                  className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-secondary"
+                  className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary-soft transition-base group-hover:bg-primary group-hover:text-primary-foreground"
                   onClick={() =>
                     p.imageUrl &&
                     setPreviewImage({
                       url: p.imageUrl,
                       name: p.name,
                     })
+                  }
+                  aria-label={
+                    p.imageUrl
+                      ? `Preview ${p.name}`
+                      : `${p.name} image unavailable`
                   }
                 >
                   {p.imageUrl ? (
@@ -235,20 +266,22 @@ export default function Products() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <PackageIcon className="h-6 w-6 text-muted-foreground" />
+                    <PackageIcon className="h-6 w-6 text-muted-foreground group-hover:text-primary-foreground" />
                   )}
                 </button>
-                <Badge variant="secondary" className="rounded-full text-xs">
+                <Badge className="rounded-full border-0 bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
                   {p.category ?? "General"}
                 </Badge>
               </div>
-              <div className="mt-4">
-                <h3 className="font-semibold truncate">{p.name}</h3>
-                <p className="text-lg font-bold text-primary mt-1">
+
+              <div className="relative mt-4">
+                <h3 className="truncate text-sm font-semibold">{p.name}</h3>
+                <p className="mt-2 text-xl font-extrabold text-primary">
                   {formatCurrency(p.price)}
                 </p>
               </div>
-              <div className="mt-4 flex gap-2 transition-base sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+
+              <div className="relative mt-4 flex gap-2 transition-base sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                 <Button
                   variant="outline"
                   size="sm"
@@ -260,7 +293,7 @@ export default function Products() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  className="border-border/70 text-destructive hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => setConfirmDelete(p)}
                   aria-label={`Delete ${p.name}`}
                 >

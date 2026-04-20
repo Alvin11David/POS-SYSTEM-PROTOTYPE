@@ -27,30 +27,53 @@ const toneStyles: Record<string, { bg: string; ring: string; glow: string }> = {
   },
 };
 
-export function StatCard({ label, value, delta, icon: Icon, tone = "primary" }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  delta,
+  icon: Icon,
+  tone = "primary",
+}: StatCardProps) {
   const positive = (delta ?? 0) >= 0;
   const t = toneStyles[tone];
   return (
-    <Card className="group relative overflow-hidden p-5 shadow-sm border-border/60 transition-spring hover:shadow-elevated hover:-translate-y-1 hover:border-primary/20">
-      <div className={`absolute -top-12 -right-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl opacity-60 transition-base group-hover:opacity-100`} />
+    <Card className="group relative overflow-hidden border-border/70 bg-linear-to-b from-card via-card to-background/60 p-5 shadow-soft transition-spring hover:-translate-y-1 hover:shadow-elevated hover:border-primary/20">
+      <div
+        className={`absolute -right-12 -top-12 h-32 w-32 rounded-full bg-linear-to-br ${t.glow} to-transparent blur-2xl opacity-70 transition-base group-hover:opacity-100`}
+      />
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-primary/35 to-transparent" />
+
       <div className="relative flex items-start justify-between">
-        <div className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-md ring-4 ${t.ring} ${t.bg}`}>
-          <Icon className="h-[18px] w-[18px]" />
+        <div
+          className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-md ring-4 ${t.ring} ${t.bg}`}
+        >
+          <Icon className="h-4.5 w-4.5" />
         </div>
+
         {delta !== undefined && (
           <div
-            className={`flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ${
-              positive ? "bg-success-soft text-success" : "bg-destructive/10 text-destructive"
+            className={`flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold tracking-wide ${
+              positive
+                ? "bg-success-soft text-success"
+                : "bg-destructive/10 text-destructive"
             }`}
           >
-            {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+            {positive ? (
+              <TrendingUp className="h-3 w-3" />
+            ) : (
+              <TrendingDown className="h-3 w-3" />
+            )}
             {Math.abs(delta)}%
           </div>
         )}
       </div>
       <div className="relative mt-5">
-        <p className="text-[12.5px] font-medium text-muted-foreground">{label}</p>
-        <p className="mt-1 text-[26px] font-bold tracking-tight leading-none">{value}</p>
+        <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          {label}
+        </p>
+        <p className="mt-1.5 text-[28px] font-black leading-none tracking-tight">
+          {value}
+        </p>
       </div>
     </Card>
   );

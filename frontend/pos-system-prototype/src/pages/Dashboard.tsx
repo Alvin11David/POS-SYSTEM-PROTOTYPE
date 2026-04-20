@@ -7,6 +7,9 @@ import {
   TrendingUp,
   Plus,
   Eye,
+  Clock3,
+  Sparkles,
+  Activity,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +19,7 @@ import { ReceiptDialog } from "@/components/ReceiptDialog";
 import { usePos } from "@/store/posStore";
 import { useAuth } from "@/store/authStore";
 import { useCurrency } from "@/store/currencyStore";
+import { useTour } from "@/store/tourStore";
 import { Sale } from "@/types/pos";
 import {
   Area,
@@ -31,6 +35,7 @@ export default function Dashboard() {
   const { sales } = usePos();
   const { currentUser } = useAuth();
   const { formatCurrency } = useCurrency();
+  const { start: startTour } = useTour();
   const navigate = useNavigate();
   const [selected, setSelected] = useState<Sale | null>(null);
   const firstName = (
@@ -65,38 +70,111 @@ export default function Dashboard() {
     });
   }, [sales]);
 
+  const weekRevenue = chartData.reduce((acc, day) => acc + day.sales, 0);
+  const bestDay = chartData.reduce((best, day) =>
+    day.sales > best.sales ? day : best,
+  );
+  const avgTicket =
+    todaysSales.length > 0 ? todayRevenue / todaysSales.length : 0;
+
   return (
-    <div className="space-y-6 max-w-375 mx-auto">
+    <div className="relative mx-auto max-w-375 space-y-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-115 overflow-hidden rounded-4xl">
+        <div className="absolute inset-0 bg-[radial-gradient(60%_55%_at_20%_22%,hsl(var(--primary)/0.16),transparent_68%),radial-gradient(45%_40%_at_92%_8%,hsl(var(--success)/0.18),transparent_72%)]" />
+      </div>
+
       <div
-        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/60 bg-linear-to-br from-primary via-primary to-primary-glow p-5 sm:p-6 md:p-8 shadow-glow-lg"
+        className="relative overflow-hidden rounded-3xl border border-border/70 bg-linear-to-br from-slate-900 via-slate-900 to-primary/80 p-5 text-primary-foreground shadow-elevated sm:p-6 md:p-8"
         data-tour="dashboard-hero"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(0_0%_100%/0.2),transparent_50%)]" />
-        <div className="absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute top-10 right-32 h-32 w-32 rounded-full bg-white/5 blur-2xl hidden sm:block" />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-          <div className="text-primary-foreground min-w-0">
-            <Badge className="mb-3 bg-white/15 text-white hover:bg-white/20 border-0 backdrop-blur-sm rounded-full px-3 py-1 text-[11px] font-medium">
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,hsl(0_0%_100%/0.15),transparent_40%)]" />
+        <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-success/20 blur-3xl" />
+        <div className="absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-primary-glow/30 blur-3xl" />
+
+        <div className="relative grid gap-6 xl:grid-cols-[1.15fr_0.85fr] xl:items-end">
+          <div className="min-w-0 animate-fade-in">
+            <Badge className="mb-3 rounded-full border-0 bg-white/15 px-3 py-1 text-[11px] font-medium text-white backdrop-blur-sm hover:bg-white/20">
               {new Date().toLocaleDateString(undefined, {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
               })}
             </Badge>
-            <h1 className="text-xl sm:text-2xl md:text-[32px] font-bold tracking-tight leading-tight">
-              Welcome back, {firstName} 👋
+
+            <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl md:text-[36px]">
+              Welcome back, to your {firstName} 👋
             </h1>
-            <p className="text-sm md:text-[15px] text-white/80 mt-1.5 max-w-lg">
-              Here's what's happening in your store today. You're doing great!
+
+            <p className="mt-2 max-w-xl text-sm text-white/80 md:text-[15px]">
+              Here is your command center for today. Revenue, activity, and
+              quick actions are all in one place.
             </p>
+
+            <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-3 backdrop-blur-sm">
+                <p className="text-[11px] uppercase tracking-wide text-white/70">
+                  Today Revenue
+                </p>
+                <p className="mt-1 text-lg font-extrabold tracking-tight">
+                  {formatCurrency(todayRevenue)}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-3 backdrop-blur-sm">
+                <p className="text-[11px] uppercase tracking-wide text-white/70">
+                  Avg Ticket
+                </p>
+                <p className="mt-1 text-lg font-extrabold tracking-tight">
+                  {formatCurrency(avgTicket)}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-3 backdrop-blur-sm">
+                <p className="text-[11px] uppercase tracking-wide text-white/70">
+                  Top Day
+                </p>
+                <p className="mt-1 text-lg font-extrabold tracking-tight">
+                  {bestDay.day}
+                </p>
+              </div>
+            </div>
           </div>
-          <Button
-            onClick={() => navigate("/sales")}
-            size="lg"
-            className="gap-2 bg-white text-primary hover:bg-white/95 hover:scale-[1.03] transition-spring shadow-lg font-semibold rounded-xl w-full sm:w-auto"
-          >
-            <Plus className="h-4 w-4" /> New Sale
-          </Button>
+
+          <div className="grid gap-3 rounded-2xl border border-white/15 bg-black/10 p-4 backdrop-blur-md animate-fade-in [animation-delay:120ms]">
+            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2.5">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/75">
+                <Clock3 className="h-3.5 w-3.5" /> Updated now
+              </div>
+              <span className="text-sm font-bold">{todaysSales.length}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/10 px-3 py-2.5">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/75">
+                <Activity className="h-3.5 w-3.5" /> Week Revenue
+              </div>
+              <span className="text-sm font-bold">
+                {formatCurrency(weekRevenue)}
+              </span>
+            </div>
+            <Button
+              onClick={() => navigate("/sales")}
+              size="lg"
+              className="h-11 gap-2 rounded-xl bg-white font-semibold text-slate-900 shadow-lg transition-spring hover:scale-[1.02] hover:bg-white/95"
+            >
+              <Plus className="h-4 w-4" /> Start New Sale
+            </Button>
+            <Button
+              onClick={() => navigate("/reports")}
+              variant="outline"
+              className="h-11 gap-2 rounded-xl border-white/25 bg-white/10 font-semibold text-white hover:bg-white/20"
+            >
+              <Sparkles className="h-4 w-4" /> View Reports
+            </Button>
+            <Button
+              onClick={startTour}
+              variant="outline"
+              className="h-11 gap-2 rounded-xl border-white/25 bg-white/10 font-semibold text-white hover:bg-white/20"
+            >
+              <Sparkles className="h-4 w-4" /> Start Tour
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -134,7 +212,8 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="p-4 sm:p-6 lg:col-span-2 shadow-sm border-border/60 transition-base hover:shadow-soft">
+        <Card className="overflow-hidden border-border/60 bg-linear-to-b from-card to-background/40 p-4 shadow-soft transition-base hover:shadow-elevated sm:p-6 lg:col-span-2 animate-fade-in [animation-delay:140ms]">
+          <div className="pointer-events-none absolute right-0 top-0 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="font-semibold text-[15px]">Sales overview</h3>
@@ -142,7 +221,7 @@ export default function Dashboard() {
                 Last 7 days performance
               </p>
             </div>
-            <Badge className="bg-primary-soft text-primary hover:bg-primary-soft border-0 rounded-full px-3 font-medium">
+            <Badge className="rounded-full border-0 bg-primary-soft px-3 font-medium text-primary hover:bg-primary-soft">
               Weekly
             </Badge>
           </div>
@@ -167,7 +246,7 @@ export default function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid
-                  strokeDasharray="3 3"
+                  strokeDasharray="4 4"
                   stroke="hsl(var(--border))"
                   vertical={false}
                 />
@@ -201,7 +280,7 @@ export default function Dashboard() {
                   type="monotone"
                   dataKey="sales"
                   stroke="hsl(var(--primary))"
-                  strokeWidth={2.5}
+                  strokeWidth={2.8}
                   fill="url(#salesGrad)"
                 />
               </AreaChart>
@@ -209,7 +288,7 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card className="p-4 sm:p-6 shadow-sm border-border/60 transition-base hover:shadow-soft">
+        <Card className="border-border/60 bg-card/90 p-4 shadow-soft transition-base hover:shadow-elevated sm:p-6 animate-fade-in [animation-delay:220ms]">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="font-semibold text-[15px]">Recent transactions</h3>
@@ -223,7 +302,7 @@ export default function Dashboard() {
           </div>
           {sales.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="h-14 w-14 rounded-2xl bg-linear-to-br from-secondary to-secondary/50 flex items-center justify-center mb-3 ring-4 ring-secondary/40">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-secondary to-secondary/50 ring-4 ring-secondary/40">
                 <Receipt className="h-6 w-6 text-muted-foreground" />
               </div>
               <p className="text-sm font-semibold">No sales yet</p>
@@ -244,10 +323,10 @@ export default function Dashboard() {
                 <li key={s.id}>
                   <button
                     onClick={() => setSelected(s)}
-                    className="group flex w-full items-center justify-between rounded-xl border border-border/50 p-3 text-left transition-base hover:border-primary/30 hover:bg-primary-soft/40 hover:shadow-xs"
+                    className="group flex w-full items-center justify-between rounded-2xl border border-border/50 bg-background/80 p-3 text-left transition-base hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary-soft/30 hover:shadow-sm"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-xl bg-primary-soft flex items-center justify-center group-hover:gradient-primary transition-base">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft transition-base group-hover:gradient-primary">
                         <Receipt className="h-4 w-4 text-primary group-hover:text-primary-foreground transition-base" />
                       </div>
                       <div>
