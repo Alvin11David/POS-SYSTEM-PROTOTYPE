@@ -11,12 +11,14 @@ import { TourProvider } from "@/store/tourStore";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { TourOverlay } from "@/components/TourOverlay";
+import { NotificationProvider } from "@/store/notificationStore";
 import Index from "./pages/Index.tsx";
 import Sales from "./pages/Sales.tsx";
 import Products from "./pages/Products.tsx";
 import Reports from "./pages/Reports.tsx";
 import Staff from "./pages/Staff.tsx";
 import Guide from "./pages/Guide.tsx";
+import Notifications from "./pages/Notifications.tsx";
 import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -85,6 +87,14 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -101,12 +111,14 @@ const App = () => (
         <CurrencyProvider>
           <PosProvider>
             <PosExtraProvider>
-              <BrowserRouter>
-                <TourProvider>
-                  <AppRoutes />
-                  <TourOverlay />
-                </TourProvider>
-              </BrowserRouter>
+              <NotificationProvider>
+                <BrowserRouter>
+                  <TourProvider>
+                    <AppRoutes />
+                    <TourOverlay />
+                  </TourProvider>
+                </BrowserRouter>
+              </NotificationProvider>
             </PosExtraProvider>
           </PosProvider>
         </CurrencyProvider>

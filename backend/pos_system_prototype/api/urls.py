@@ -9,6 +9,8 @@ from .views import (
     settings_view,
     user_detail_view,
     users_view,
+    notifications_view,
+    notification_detail_view,
 )
 
 urlpatterns = [
@@ -20,4 +22,6 @@ urlpatterns = [
     path("products/", products_view, name="api-products"),
     path("products/<uuid:product_id>/", product_detail_view, name="api-product-detail"),
     path("sales/", sales_view, name="api-sales"),
+    path("notifications/", notifications_view, name="api-notifications"),
+    path("notifications/<uuid:notification_id>/", notification_detail_view, name="api-notification-detail"),
 ]

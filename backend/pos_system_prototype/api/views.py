@@ -10,7 +10,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .models import AppSetting, Product, Sale, SaleItem
+from .models import AppSetting, Product, Sale, SaleItem, Notification
 
 
 User = get_user_model()
@@ -95,6 +95,18 @@ def serialize_sale(sale):
         "items": [serialize_sale_item(item) for item in sale.items.all()],
         "total": float(sale.total),
         "createdAt": sale.created_at.isoformat(),
+    }
+
+
+def serialize_notification(notification):
+    return {
+        "id": str(notification.id),
+        "title": notification.title,
+        "message": notification.message,
+        "type": notification.notification_type,
+        "isRead": notification.is_read,
+        "createdAt": notification.created_at.isoformat(),
+        "updatedAt": notification.updated_at.isoformat(),
     }
 
 
@@ -432,3 +444,48 @@ def sales_view(request):
     SaleItem.objects.bulk_create(item_models)
     sale.refresh_from_db()
     return JsonResponse({"sale": serialize_sale(sale)}, status=201)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def notifications_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"detail": "Forbidden"}, status=403)
+
+    notifications = Notification.objects.filter(user=request.user)
+    unread_count = notifications.filter(is_read=False).count()
+    
+    return JsonResponse({
+        "notifications": [serialize_notification(n) for n in notifications],
+        "unreadCount": unread_count,
+    })
+
+
+@csrf_exempt
+@require_http_methods(["GET", "PUT", "DELETE"])
+def notification_detail_view(request, notification_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"detail": "Forbidden"}, status=403)
+
+    try:
+        notification = Notification.objects.get(id=notification_id, user=request.user)
+    except Notification.DoesNotExist:
+        return JsonResponse({"detail": "Not found"}, status=404)
+
+    if request.method == "GET":
+        return JsonResponse({"notification": serialize_notification(notification)})
+
+    if request.method == "PUT":
+        payload = _parse_body(request)
+        if payload is None:
+            return JsonResponse({"detail": "Invalid JSON body"}, status=400)
+
+        if "isRead" in payload:
+            notification.is_read = bool(payload.get("isRead"))
+            notification.save()
+
+        return JsonResponse({"notification": serialize_notification(notification)})
+
+    if request.method == "DELETE":
+        notification.delete()
+        return JsonResponse({"detail": "Notification deleted"}, status=204)

@@ -38,3 +38,24 @@ class SaleItem(models.Model):
 class AppSetting(models.Model):
     currency = models.CharField(max_length=3, default="USD")
     tax_rate = models.DecimalField(max_digits=6, decimal_places=4, default=Decimal("0.0800"))
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ("success", "Success"),
+        ("info", "Info"),
+        ("warning", "Warning"),
+        ("error", "Error"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default="info")
+    is_read = models.BooleanField(default=False)
+    user = models.ForeignKey("auth.User", null=True, blank=True, on_delete=models.CASCADE, related_name="notifications")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
