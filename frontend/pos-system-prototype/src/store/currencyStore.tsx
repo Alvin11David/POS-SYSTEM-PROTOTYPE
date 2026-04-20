@@ -1,4 +1,12 @@
-import { createContext, useContext, useMemo, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  ReactNode,
+} from "react";
+import { useAuth } from "@/store/authStore";
 
 export type CurrencyCode = "USD" | "EUR" | "GBP" | "KES" | "UGX";
 
@@ -24,7 +32,25 @@ interface CurrencyCtx {
 
 const Ctx = createContext<CurrencyCtx | null>(null);
 
+async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
+    ...init,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
+
 export function CurrencyProvider({ children }: { children: ReactNode }) {
+  const { currentUser } = useAuth();
   const [currency, setCurrency] = useState<CurrencyCode>(() => {
     const stored = localStorage.getItem(CURRENCY_KEY) as CurrencyCode | null;
     if (stored && CURRENCY_OPTIONS.some((opt) => opt.code === stored)) {
@@ -41,6 +67,48 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     return 0.08;
   });
 
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const data = await apiJson<{
+          settings: { currency: CurrencyCode; taxRate: number };
+        }>("/api/settings/");
+        if (
+          CURRENCY_OPTIONS.some((opt) => opt.code === data.settings.currency)
+        ) {
+          setCurrency(data.settings.currency);
+          localStorage.setItem(CURRENCY_KEY, data.settings.currency);
+        }
+        if (
+          Number.isFinite(data.settings.taxRate) &&
+          data.settings.taxRate >= 0
+        ) {
+          setTaxRate(data.settings.taxRate);
+          localStorage.setItem(TAX_RATE_KEY, String(data.settings.taxRate));
+        }
+      } catch {
+        // Keep local settings when backend settings are unavailable.
+      }
+    };
+
+    void loadSettings();
+  }, [currentUser?.id]);
+
+  const persistSettings = (nextCurrency: CurrencyCode, nextTaxRate: number) => {
+    void apiJson<{ settings: { currency: CurrencyCode; taxRate: number } }>(
+      "/api/settings/",
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          currency: nextCurrency,
+          taxRate: nextTaxRate,
+        }),
+      },
+    ).catch(() => {
+      // Local state remains as fallback if backend update is not allowed/unavailable.
+    });
+  };
+
   const value = useMemo<CurrencyCtx>(() => {
     const formatCurrency = (amount: number) =>
       new Intl.NumberFormat("en-US", {
@@ -55,12 +123,14 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       setCurrency: (next) => {
         setCurrency(next);
         localStorage.setItem(CURRENCY_KEY, next);
+        persistSettings(next, taxRate);
       },
       taxRate,
       setTaxRate: (next) => {
         const safe = Number.isFinite(next) && next >= 0 ? next : 0;
         setTaxRate(safe);
         localStorage.setItem(TAX_RATE_KEY, String(safe));
+        persistSettings(currency, safe);
       },
       formatCurrency,
       currencyOptions: CURRENCY_OPTIONS,

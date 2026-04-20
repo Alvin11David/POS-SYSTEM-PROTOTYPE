@@ -114,21 +114,25 @@ export default function Staff() {
     setForm({
       fullName: u.fullName,
       username: u.username,
-      password: u.password,
+      password: "",
       role: u.role,
     });
     setOpen(true);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editing) {
-      updateUser(editing.id, form);
+      const res = await updateUser(editing.id, form);
+      if (!res.ok) {
+        toast.error(res.error ?? "Could not update user");
+        return;
+      }
       toast.success(`${form.fullName || form.username} updated`);
       setOpen(false);
       return;
     }
-    const res = addUser(form);
+    const res = await addUser(form);
     if (!res.ok) {
       toast.error(res.error ?? "Could not add user");
       return;
@@ -139,9 +143,13 @@ export default function Staff() {
     setOpen(false);
   };
 
-  const confirmRemove = () => {
+  const confirmRemove = async () => {
     if (!confirmDelete) return;
-    deleteUser(confirmDelete.id);
+    const res = await deleteUser(confirmDelete.id);
+    if (!res.ok) {
+      toast.error(res.error ?? "Could not remove user");
+      return;
+    }
     toast.success(
       `${confirmDelete.fullName || confirmDelete.username} removed`,
     );
@@ -416,8 +424,10 @@ export default function Staff() {
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
                   }
-                  placeholder="min 4 chars"
-                  required
+                  placeholder={
+                    editing ? "Leave blank to keep current" : "min 4 chars"
+                  }
+                  required={!editing}
                 />
               </div>
             </div>

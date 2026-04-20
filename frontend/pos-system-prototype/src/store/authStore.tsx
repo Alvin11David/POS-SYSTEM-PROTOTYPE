@@ -17,19 +17,7 @@ export interface User {
   createdAt: string;
 }
 
-const USERS_KEY = "jambo_users";
 const SESSION_KEY = "jambo_session";
-
-const defaultUsers: User[] = [
-  {
-    id: "u-admin",
-    username: "admin",
-    password: "admin123",
-    fullName: "Store Admin",
-    role: "admin",
-    createdAt: new Date().toISOString(),
-  },
-];
 
 interface AuthCtx {
   users: User[];
@@ -39,28 +27,57 @@ interface AuthCtx {
     password: string,
   ) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
-  addUser: (u: Omit<User, "id" | "createdAt">) => {
-    ok: boolean;
-    error?: string;
-  };
-  updateUser: (id: string, u: Partial<Omit<User, "id" | "createdAt">>) => void;
-  deleteUser: (id: string) => void;
+  addUser: (
+    u: Omit<User, "id" | "createdAt">,
+  ) => Promise<{ ok: boolean; error?: string }>;
+  updateUser: (
+    id: string,
+    u: Partial<Omit<User, "id" | "createdAt">>,
+  ) => Promise<{ ok: boolean; error?: string }>;
+  deleteUser: (id: string) => Promise<{ ok: boolean; error?: string }>;
   hasRole: (...roles: Role[]) => boolean;
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
 
-type BackendUser = Pick<User, "id" | "username" | "fullName" | "role">;
+type BackendUser = Pick<
+  User,
+  "id" | "username" | "fullName" | "role" | "createdAt"
+>;
+
+async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
+    ...init,
+  });
+
+  const data = (await response.json().catch(() => ({}))) as T & {
+    detail?: string;
+  };
+  if (!response.ok) {
+    throw new Error(data.detail ?? `Request failed: ${response.status}`);
+  }
+
+  return data;
+}
+
+function toLocalUser(backendUser: BackendUser, password = ""): User {
+  return {
+    id: backendUser.id,
+    username: backendUser.username,
+    fullName: backendUser.fullName,
+    role: backendUser.role,
+    createdAt: backendUser.createdAt,
+    password,
+  };
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [users, setUsers] = useState<User[]>(() => {
-    try {
-      const raw = localStorage.getItem(USERS_KEY);
-      return raw ? JSON.parse(raw) : defaultUsers;
-    } catch {
-      return defaultUsers;
-    }
-  });
+  const [users, setUsers] = useState<User[]>([]);
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
@@ -72,13 +89,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
     if (currentUser)
       localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
     else localStorage.removeItem(SESSION_KEY);
+  }, [currentUser]);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      if (!currentUser || currentUser.role !== "admin") {
+        setUsers([]);
+        return;
+      }
+
+      try {
+        const data = await apiJson<{ users: BackendUser[] }>(
+          "/api/auth/users/",
+        );
+        setUsers(
+          data.users.map((entry) =>
+            toLocalUser(
+              entry,
+              entry.id === currentUser.id ? currentUser.password : "",
+            ),
+          ),
+        );
+      } catch {
+        setUsers([]);
+      }
+    };
+
+    void loadUsers();
   }, [currentUser]);
 
   const login: AuthCtx["login"] = async (username, password) => {
@@ -102,24 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const backendUser = data.user as BackendUser;
-      const localUser = users.find(
-        (entry) =>
-          entry.username.toLowerCase() === backendUser.username.toLowerCase(),
-      );
-      const sessionUser: User = localUser
-        ? {
-            ...localUser,
-            ...backendUser,
-            password,
-          }
-        : {
-            id: backendUser.id,
-            username: backendUser.username,
-            password,
-            fullName: backendUser.fullName,
-            role: backendUser.role,
-            createdAt: new Date().toISOString(),
-          };
+      const sessionUser: User = toLocalUser(backendUser, password);
 
       setCurrentUser(sessionUser);
       return { ok: true };
@@ -136,36 +159,100 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentUser(null);
   };
 
-  const addUser: AuthCtx["addUser"] = (u) => {
+  const addUser: AuthCtx["addUser"] = async (u) => {
     if (!u.username.trim()) return { ok: false, error: "Username required" };
     if (u.password.length < 4)
       return { ok: false, error: "Password must be 4+ characters" };
-    if (
-      users.some(
-        (x) => x.username.toLowerCase() === u.username.trim().toLowerCase(),
-      )
-    )
-      return { ok: false, error: "Username already exists" };
-    const newUser: User = {
-      ...u,
-      username: u.username.trim(),
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setUsers((prev) => [...prev, newUser]);
-    return { ok: true };
-  };
+    try {
+      const payload = await apiJson<{ user: BackendUser }>("/api/auth/users/", {
+        method: "POST",
+        body: JSON.stringify({
+          fullName: u.fullName,
+          username: u.username.trim(),
+          password: u.password,
+          role: u.role,
+        }),
+      });
 
-  const updateUser: AuthCtx["updateUser"] = (id, patch) => {
-    setUsers((prev) => prev.map((x) => (x.id === id ? { ...x, ...patch } : x)));
-    if (currentUser?.id === id) {
-      setCurrentUser((c) => (c ? { ...c, ...patch } : c));
+      setUsers((prev) => [...prev, toLocalUser(payload.user)]);
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : "Could not add user",
+      };
     }
   };
 
-  const deleteUser: AuthCtx["deleteUser"] = (id) => {
-    setUsers((prev) => prev.filter((x) => x.id !== id));
-    if (currentUser?.id === id) setCurrentUser(null);
+  const updateUser: AuthCtx["updateUser"] = async (id, patch) => {
+    const payload: Partial<Omit<User, "id" | "createdAt">> = {
+      ...patch,
+    };
+
+    if (payload.username !== undefined) {
+      payload.username = payload.username.trim();
+      if (!payload.username) {
+        return { ok: false, error: "Username required" };
+      }
+    }
+
+    if (
+      payload.password !== undefined &&
+      payload.password.length > 0 &&
+      payload.password.length < 4
+    ) {
+      return { ok: false, error: "Password must be 4+ characters" };
+    }
+
+    try {
+      const data = await apiJson<{ user: BackendUser }>(
+        `/api/auth/users/${id}/`,
+        {
+          method: "PUT",
+          body: JSON.stringify(payload),
+        },
+      );
+
+      setUsers((prev) =>
+        prev.map((entry) =>
+          entry.id === id
+            ? toLocalUser(data.user, payload.password ?? entry.password)
+            : entry,
+        ),
+      );
+
+      if (currentUser?.id === id) {
+        setCurrentUser((existing) =>
+          existing
+            ? toLocalUser(data.user, payload.password ?? existing.password)
+            : existing,
+        );
+      }
+
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : "Could not update user",
+      };
+    }
+  };
+
+  const deleteUser: AuthCtx["deleteUser"] = async (id) => {
+    try {
+      await apiJson<{ ok: boolean }>(`/api/auth/users/${id}/`, {
+        method: "DELETE",
+      });
+
+      setUsers((prev) => prev.filter((x) => x.id !== id));
+      if (currentUser?.id === id) setCurrentUser(null);
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : "Could not remove user",
+      };
+    }
   };
 
   const hasRole: AuthCtx["hasRole"] = (...roles) =>

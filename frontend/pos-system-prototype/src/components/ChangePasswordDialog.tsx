@@ -30,7 +30,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: Props) {
     setConfirm("");
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
     if (current !== currentUser.password) {
@@ -45,7 +45,11 @@ export function ChangePasswordDialog({ open, onOpenChange }: Props) {
       toast.error("Passwords don't match");
       return;
     }
-    updateUser(currentUser.id, { password: next });
+    const result = await updateUser(currentUser.id, { password: next });
+    if (!result.ok) {
+      toast.error(result.error ?? "Could not update password");
+      return;
+    }
     toast.success("Password updated");
     reset();
     onOpenChange(false);
@@ -101,7 +105,11 @@ export function ChangePasswordDialog({ open, onOpenChange }: Props) {
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" className="shadow-glow">

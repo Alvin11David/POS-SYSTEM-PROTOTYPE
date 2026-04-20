@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 from django.db import models
 
@@ -32,3 +33,8 @@ class SaleItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     emoji = models.CharField(max_length=16, blank=True)
+
+
+class AppSetting(models.Model):
+    currency = models.CharField(max_length=3, default="USD")
+    tax_rate = models.DecimalField(max_digits=6, decimal_places=4, default=Decimal("0.0800"))
