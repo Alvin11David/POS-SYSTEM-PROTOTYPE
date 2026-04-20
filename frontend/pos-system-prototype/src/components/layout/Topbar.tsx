@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { ROLE_LABEL, useAuth } from "@/store/authStore";
 import { useNotification } from "@/store/notificationStore";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -37,7 +37,6 @@ import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { cn } from "@/lib/utils";
 
 export function Topbar() {
-  const { state, isMobile } = useSidebar();
   const navigate = useNavigate();
   const { products, sales } = usePos();
   const { formatCurrency } = useCurrency();
@@ -59,7 +58,6 @@ export function Topbar() {
   const [open, setOpen] = useState(false);
   const [pwdOpen, setPwdOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const isDesktopSidebarExpanded = !isMobile && state === "expanded";
 
   // Fetch notifications on mount
   useEffect(() => {
@@ -112,9 +110,7 @@ export function Topbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl transition-[transform,padding,border-radius,margin,box-shadow] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:gap-3 sm:px-4",
-        isDesktopSidebarExpanded &&
-          "md:mx-1.5 md:mt-1.5 md:rounded-xl md:border md:border-border/70 md:bg-background/85 md:px-4 md:shadow-sm",
+        "sticky top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-border/60 bg-background/75 px-3 backdrop-blur-xl transition-[padding] duration-300 ease-out motion-reduce:transition-none sm:gap-3 sm:px-4",
       )}
       data-tour="topbar"
     >
@@ -128,10 +124,7 @@ export function Topbar() {
           <div
             data-tour="topbar-search"
             className={cn(
-              "relative hidden min-w-0 flex-1 transition-[transform,margin] duration-450 ease-[cubic-bezier(0.22,1,0.36,1)] md:block md:max-w-sm lg:max-w-md",
-              isDesktopSidebarExpanded
-                ? "md:ml-0 md:-translate-x-3"
-                : "md:ml-1 md:translate-x-0",
+              "relative hidden min-w-0 flex-1 md:ml-1 md:block md:max-w-sm lg:max-w-md",
             )}
           >
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -314,7 +307,7 @@ export function Topbar() {
               <div
                 className={cn(
                   "hidden flex-col items-start leading-tight",
-                  isDesktopSidebarExpanded ? "xl:flex" : "lg:flex",
+                  "lg:flex",
                 )}
               >
                 <span className="text-xs font-semibold">
