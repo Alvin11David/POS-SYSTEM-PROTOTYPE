@@ -40,7 +40,7 @@ export default function Login() {
           <iframe
             src="https://my.spline.design/thecastle3diconcopycopy-rOqj6yCCmCipaSBTx5nk1yW3-JPB/"
             title="Castle 3D animation"
-            className="absolute inset-0 block h-[112%] w-[112%] -translate-x-[6%] -translate-y-[6%]"
+            className="absolute inset-0 block h-[130%] w-[130%] -translate-x-[15%] -translate-y-[15%]"
             style={{ border: 0 }}
             aria-hidden="true"
           />
