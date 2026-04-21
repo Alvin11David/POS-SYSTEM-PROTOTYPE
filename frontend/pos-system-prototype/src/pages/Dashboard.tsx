@@ -102,7 +102,7 @@ export default function Dashboard() {
             </Badge>
 
             <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl md:text-[36px]">
-              Welcome back, to your {firstName} 👋
+              Welcome back,s {firstName} 👋
             </h1>
 
             <p className="mt-2 max-w-xl text-sm text-white/80 md:text-[15px]">

@@ -82,7 +82,16 @@ export default function Reports() {
       return;
     }
     const rows = [
-      ["Sale ID", "Date", "Items", "Total", "Client Name", "Client Phone", "Sold By", "Notes"],
+      [
+        "Sale ID",
+        "Date",
+        "Items",
+        "Total",
+        "Client Name",
+        "Client Phone",
+        "Sold By",
+        "Notes",
+      ],
       ...filteredSales.map((s) => [
         s.id,
         new Date(s.createdAt).toISOString(),
@@ -371,7 +380,10 @@ export default function Reports() {
                           #{s.id.slice(0, 6).toUpperCase()}
                         </p>
                         {s.clientName && (
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] px-1.5 py-0"
+                          >
                             {s.clientName}
                           </Badge>
                         )}
@@ -388,7 +400,9 @@ export default function Reports() {
                         {s.soldBy && (
                           <>
                             <span className="hidden sm:inline">·</span>
-                            <span className="hidden sm:inline italic">By: {s.soldBy}</span>
+                            <span className="hidden sm:inline italic">
+                              By: {s.soldBy}
+                            </span>
                           </>
                         )}
                       </p>

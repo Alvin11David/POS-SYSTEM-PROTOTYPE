@@ -22,10 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-htj!_(jk_s8)s^ivsheoy*cjmrab52zo_64d9rzb6gj3=f&gd$'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
+# SECURITY WARNING: don't run with debug turned on in production!
+import os
+DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
+
+# Allow all hosts for Render, restrict in production as needed
+ALLOWED_HOSTS = [".onrender.com", "localhost", "127.0.0.1", "testserver"]
 
 
 # Application definition
@@ -116,7 +119,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# For Render deployment, allow serving static files
+if not DEBUG:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

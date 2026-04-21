@@ -273,7 +273,9 @@ export default function Sales() {
           <div className="my-4 space-y-3 px-1">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground">Client Name</Label>
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Client Name
+                </Label>
                 <Input
                   className="h-8 text-xs"
                   placeholder="Optional..."
@@ -282,7 +284,9 @@ export default function Sales() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground">Client Contact</Label>
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Client Contact
+                </Label>
                 <Input
                   className="h-8 text-xs"
                   placeholder="Phone or Email..."
@@ -293,15 +297,23 @@ export default function Sales() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground">Sold By</Label>
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Sold By
+                </Label>
                 <Input
                   className="h-8 text-xs bg-muted/50 cursor-not-allowed"
                   readOnly
-                  value={currentUser?.fullName || currentUser?.username || "System User"}
+                  value={
+                    currentUser?.fullName ||
+                    currentUser?.username ||
+                    "System User"
+                  }
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground">Additional Notes</Label>
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Additional Notes
+                </Label>
                 <Input
                   className="h-8 text-xs"
                   placeholder="Order notes..."

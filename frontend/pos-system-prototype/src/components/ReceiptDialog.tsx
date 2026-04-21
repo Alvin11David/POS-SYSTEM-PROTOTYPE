@@ -82,7 +82,10 @@ export function ReceiptDialog({ sale, open, onOpenChange }: Props) {
             </div>
           </div>
 
-          {(sale.clientName || sale.clientPhone || sale.soldBy || sale.notes) && (
+          {(sale.clientName ||
+            sale.clientPhone ||
+            sale.soldBy ||
+            sale.notes) && (
             <>
               <Separator />
               <div className="space-y-1 text-xs text-muted-foreground">
