@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Lock, Sparkles, User } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Lock, ShieldCheck, Sparkles, User, Zap } from "lucide-react";
 import { useAuth } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,7 @@ export default function Login() {
           <iframe
             src="https://my.spline.design/thecastle3diconcopycopy-rOqj6yCCmCipaSBTx5nk1yW3-JPB/"
             title="Castle 3D animation"
-            className="absolute inset-0 block h-[130%] w-[130%] -translate-x-[15%] -translate-y-[15%]"
+            className="absolute inset-0 block h-[130%] w-[130%] -translate-x-[13%] -translate-y-[09%]"
             style={{ border: 0 }}
             aria-hidden="true"
           />
