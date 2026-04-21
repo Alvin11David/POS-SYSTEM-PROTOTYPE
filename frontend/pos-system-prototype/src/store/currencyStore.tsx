@@ -32,8 +32,9 @@ interface CurrencyCtx {
 
 const Ctx = createContext<CurrencyCtx | null>(null);
 
+const API_BASE = import.meta.env.VITE_API_URL || "";
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${url}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",

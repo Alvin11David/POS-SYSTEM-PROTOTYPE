@@ -25,6 +25,7 @@ interface NotificationStore {
 const NotificationContext = createContext<NotificationStore | undefined>(
   undefined,
 );
+const API_BASE = import.meta.env.VITE_API_URL || "";
 
 export function NotificationProvider({
   children,
@@ -40,7 +41,7 @@ export function NotificationProvider({
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/notifications/");
+      const res = await fetch(`${API_BASE}/api/notifications/`);
       if (!res.ok) throw new Error("Failed to fetch notifications");
       const data = await res.json();
       setNotifications(data.notifications || []);
@@ -55,7 +56,7 @@ export function NotificationProvider({
   const markAsRead = useCallback(
     async (id: string) => {
       try {
-        const res = await fetch(`/api/notifications/${id}/`, {
+        const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ isRead: true }),
@@ -80,7 +81,7 @@ export function NotificationProvider({
 
   const deleteNotification = useCallback(async (id: string) => {
     try {
-      const res = await fetch(`/api/notifications/${id}/`, {
+      const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete notification");

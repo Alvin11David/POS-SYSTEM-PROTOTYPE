@@ -45,8 +45,9 @@ type BackendUser = Pick<
   "id" | "username" | "fullName" | "role" | "createdAt"
 >;
 
+const API_BASE = import.meta.env.VITE_API_URL || "";
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${url}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
@@ -123,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login: AuthCtx["login"] = async (username, password) => {
     try {
-      const response = await fetch("/api/auth/login/", {
+      const response = await fetch(`${API_BASE}/api/auth/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    void fetch("/api/auth/logout/", {
+    void fetch(`${API_BASE}/api/auth/logout/`, {
       method: "POST",
       credentials: "include",
     }).catch(() => {});
