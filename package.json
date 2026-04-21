@@ -5,6 +5,7 @@
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.1.4"
   },
   "dependencies": {
