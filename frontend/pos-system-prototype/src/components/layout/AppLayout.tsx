@@ -6,6 +6,8 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Topbar } from "./Topbar";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { cn } from "@/lib/utils";
 
 function MainWrapper({ children }: { children: ReactNode }) {
@@ -39,6 +41,8 @@ function MainWrapper({ children }: { children: ReactNode }) {
         <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 animate-fade-in overflow-y-auto">
           {children}
         </main>
+        <OfflineIndicator />
+        <InstallPrompt />
       </div>
     </SidebarInset>
   );

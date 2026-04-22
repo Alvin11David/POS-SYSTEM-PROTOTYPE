@@ -1,3 +1,16 @@
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-out {
+  animation: fade-out 0.5s ease-in 2s forwards;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

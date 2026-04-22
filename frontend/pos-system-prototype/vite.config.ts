@@ -10,19 +10,34 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\/api\/.*/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "api-cache",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24, // 24 hours
+              },
+            },
+          },
+        ],
+      },
       manifest: {
         short_name: "JamboPOS",
         name: "Jambo POS System",
         icons: [
           {
-            src: "/logo192.png",
+            src: "/logo192.svg",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/svg+xml",
           },
           {
-            src: "/logo512.png",
+            src: "/logo512.svg",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/svg+xml",
           },
         ],
         start_url: ".",
@@ -32,12 +47,28 @@ export default defineConfig({
         orientation: "portrait-primary",
         scope: ".",
         description: "A modern point-of-sale system for retail.",
-        shortcuts: [],
+        categories: ["business", "productivity", "shopping"],
+        shortcuts: [
+          {
+            name: "New Sale",
+            short_name: "Sale",
+            description: "Start a new sale transaction",
+            url: "/sales",
+            icons: [{ src: "/logo192.svg", sizes: "192x192" }],
+          },
+          {
+            name: "Products",
+            short_name: "Products",
+            description: "Manage your products",
+            url: "/products",
+            icons: [{ src: "/logo192.svg", sizes: "192x192" }],
+          },
+        ],
       },
       includeAssets: [
         "favicon.svg",
-        "logo192.png",
-        "logo512.png",
+        "logo192.svg",
+        "logo512.svg",
         "apple-touch-icon.png",
       ],
       devOptions: {

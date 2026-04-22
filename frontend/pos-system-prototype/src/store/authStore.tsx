@@ -5,6 +5,7 @@ import {
   useState,
   ReactNode,
 } from "react";
+import { queueRequestIfOffline } from "@/lib/requestQueue";
 
 export type Role = "admin" | "manager" | "cashier";
 
@@ -47,6 +48,14 @@ type BackendUser = Pick<
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  // Queue request if offline (for non-GET requests)
+  const isOffline = await queueRequestIfOffline(url, init || {}, API_BASE);
+
+  if (isOffline) {
+    // Return empty result for offline requests
+    return {} as T;
+  }
+
   const response = await fetch(`${API_BASE}${url}`, {
     credentials: "include",
     headers: {

@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { Product, Sale } from "@/types/pos";
+import { queueRequestIfOffline } from "@/lib/requestQueue";
 
 interface PosCtx {
   products: Product[];
@@ -20,6 +21,15 @@ const Ctx = createContext<PosCtx | null>(null);
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  // Queue request if offline (for non-GET requests)
+  const isOffline = await queueRequestIfOffline(url, init || {}, API_BASE);
+
+  if (isOffline) {
+    // Return empty result for offline requests
+    // The app will use optimistic updates
+    return {} as T;
+  }
+
   const response = await fetch(`${API_BASE}${url}`, {
     credentials: "include",
     headers: {

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
+import { queueRequestIfOffline } from "@/lib/requestQueue";
 
 export interface Notification {
   id: string;
@@ -56,12 +57,25 @@ export function NotificationProvider({
   const markAsRead = useCallback(
     async (id: string) => {
       try {
-        const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isRead: true }),
-        });
-        if (!res.ok) throw new Error("Failed to update notification");
+        const body = JSON.stringify({ isRead: true });
+        const isOffline = await queueRequestIfOffline(
+          `/api/notifications/${id}/`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body,
+          },
+          API_BASE,
+        );
+
+        if (!isOffline) {
+          const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body,
+          });
+          if (!res.ok) throw new Error("Failed to update notification");
+        }
         await fetchNotifications();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -81,10 +95,18 @@ export function NotificationProvider({
 
   const deleteNotification = useCallback(async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete notification");
+      const isOffline = await queueRequestIfOffline(
+        `/api/notifications/${id}/`,
+        { method: "DELETE" },
+        API_BASE,
+      );
+
+      if (!isOffline) {
+        const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Failed to delete notification");
+      }
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {

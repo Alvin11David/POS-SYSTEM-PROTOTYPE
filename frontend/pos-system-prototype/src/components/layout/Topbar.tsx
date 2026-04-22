@@ -9,9 +9,13 @@ import {
   ShoppingCart,
   ArrowRight,
   Trash2,
+  Moon,
+  Sun,
+  Check,
 } from "lucide-react";
 import { ROLE_LABEL, useAuth } from "@/store/authStore";
 import { useNotification } from "@/store/notificationStore";
+import { useTheme } from "@/store/themeStore";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -41,6 +45,7 @@ export function Topbar() {
   const { products, sales } = usePos();
   const { formatCurrency } = useCurrency();
   const { currentUser, logout } = useAuth();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const {
     notifications,
     unreadCount,
@@ -59,9 +64,16 @@ export function Topbar() {
   const [pwdOpen, setPwdOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch notifications on mount
+  // Fetch notifications on mount and poll every 10 seconds
   useEffect(() => {
     fetchNotifications();
+    
+    // Poll for new notifications every 10 seconds
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, [fetchNotifications]);
 
   // Cmd/Ctrl + K focuses search
@@ -213,6 +225,40 @@ export function Topbar() {
       </Popover>
 
       <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              aria-label="Toggle theme"
+            >
+              {resolvedTheme === "dark" ? (
+                <Moon className="h-4 w-4" />
+              ) : (
+                <Sun className="h-4 w-4" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setTheme("light")}>
+              <Sun className="mr-2 h-4 w-4" />
+              Light
+              {theme === "light" && <Check className="ml-auto h-4 w-4" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <Moon className="mr-2 h-4 w-4" />
+              Dark
+              {theme === "dark" && <Check className="ml-auto h-4 w-4" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              <Settings className="mr-2 h-4 w-4" />
+              System
+              {theme === "system" && <Check className="ml-auto h-4 w-4" />}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -254,8 +300,9 @@ export function Topbar() {
                   {notifications.slice(0, 5).map((n) => (
                     <div
                       key={n.id}
-                      className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 transition-base hover:bg-accent/40 group ${!n.isRead ? "bg-primary/5" : ""
-                        }`}
+                      className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 transition-base hover:bg-accent/40 group ${
+                        !n.isRead ? "bg-primary/5" : ""
+                      }`}
                     >
                       <span className="mt-1 text-lg">
                         {getNotificationIcon(n.type)}

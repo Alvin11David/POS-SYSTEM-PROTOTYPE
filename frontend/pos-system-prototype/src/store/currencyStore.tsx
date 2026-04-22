@@ -7,6 +7,7 @@ import {
   ReactNode,
 } from "react";
 import { useAuth } from "@/store/authStore";
+import { queueRequestIfOffline } from "@/lib/requestQueue";
 
 export type CurrencyCode = "USD" | "EUR" | "GBP" | "KES" | "UGX";
 
@@ -34,6 +35,14 @@ const Ctx = createContext<CurrencyCtx | null>(null);
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  // Queue request if offline (for non-GET requests)
+  const isOffline = await queueRequestIfOffline(url, init || {}, API_BASE);
+
+  if (isOffline) {
+    // Return empty result for offline requests
+    return {} as T;
+  }
+
   const response = await fetch(`${API_BASE}${url}`, {
     credentials: "include",
     headers: {

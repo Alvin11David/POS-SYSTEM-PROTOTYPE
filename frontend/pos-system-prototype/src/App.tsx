@@ -8,9 +8,13 @@ import { PosExtraProvider } from "@/store/posExtraStore";
 import { AuthProvider } from "@/store/authStore";
 import { CurrencyProvider } from "@/store/currencyStore";
 import { TourProvider } from "@/store/tourStore";
+import { ThemeProvider } from "@/store/themeStore";
+import { OfflineProvider } from "@/store/offlineStore";
+import { SyncProvider } from "@/store/syncStore";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { TourOverlay } from "@/components/TourOverlay";
+import { SyncStatus } from "@/components/SyncStatus";
 import { NotificationProvider } from "@/store/notificationStore";
 import Index from "./pages/Index.tsx";
 import Sales from "./pages/Sales.tsx";
@@ -23,6 +27,7 @@ import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
+const API_BASE = import.meta.env.VITE_API_URL || "";
 
 function AppRoutes() {
   const location = useLocation();
@@ -104,26 +109,33 @@ function AppRoutes() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <CurrencyProvider>
-          <PosProvider>
-            <PosExtraProvider>
-              <NotificationProvider>
-                <BrowserRouter>
-                  <TourProvider>
-                    <AppRoutes />
-                    <TourOverlay />
-                  </TourProvider>
-                </BrowserRouter>
-              </NotificationProvider>
-            </PosExtraProvider>
-          </PosProvider>
-        </CurrencyProvider>
-      </AuthProvider>
-    </TooltipProvider>
+    <ThemeProvider>
+      <OfflineProvider>
+        <SyncProvider apiBase={API_BASE}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AuthProvider>
+              <CurrencyProvider>
+                <PosProvider>
+                  <PosExtraProvider>
+                    <NotificationProvider>
+                      <BrowserRouter>
+                        <TourProvider>
+                          <AppRoutes />
+                          <TourOverlay />
+                          <SyncStatus />
+                        </TourProvider>
+                      </BrowserRouter>
+                    </NotificationProvider>
+                  </PosExtraProvider>
+                </PosProvider>
+              </CurrencyProvider>
+            </AuthProvider>
+          </TooltipProvider>
+        </SyncProvider>
+      </OfflineProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
