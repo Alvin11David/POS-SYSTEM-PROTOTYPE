@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { queueRequestIfOffline } from "@/lib/requestQueue";
+import { cacheResponse, getCachedResponse } from "@/lib/offlineCache";
 
 export type Role = "admin" | "manager" | "cashier";
 
@@ -115,16 +116,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = await apiJson<{ users: BackendUser[] }>(
           "/api/auth/users/",
         );
-        setUsers(
-          data.users.map((entry) =>
-            toLocalUser(
-              entry,
-              entry.id === currentUser.id ? currentUser.password : "",
-            ),
+        const users = data.users.map((entry) =>
+          toLocalUser(
+            entry,
+            entry.id === currentUser.id ? currentUser.password : "",
           ),
         );
+        setUsers(users);
+        // Cache the users list for offline access
+        await cacheResponse("/api/auth/users/", data);
       } catch {
-        setUsers([]);
+        // Try to get from offline cache on error
+        const cachedData = await getCachedResponse("/api/auth/users/");
+        if (cachedData && typeof cachedData === "object" && "users" in cachedData) {
+          const users = (cachedData as { users: BackendUser[] }).users.map(
+            (entry) =>
+              toLocalUser(
+                entry,
+                entry.id === currentUser.id ? currentUser.password : "",
+              ),
+          );
+          setUsers(users);
+        } else {
+          setUsers([]);
+        }
       }
     };
 
