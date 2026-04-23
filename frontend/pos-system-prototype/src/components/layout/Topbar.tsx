@@ -67,12 +67,12 @@ export function Topbar() {
   // Fetch notifications on mount and poll every 10 seconds
   useEffect(() => {
     fetchNotifications();
-    
+
     // Poll for new notifications every 10 seconds
     const interval = setInterval(() => {
       fetchNotifications();
     }, 10000);
-    
+
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
@@ -300,9 +300,8 @@ export function Topbar() {
                   {notifications.slice(0, 5).map((n) => (
                     <div
                       key={n.id}
-                      className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 transition-base hover:bg-accent/40 group ${
-                        !n.isRead ? "bg-primary/5" : ""
-                      }`}
+                      className={`flex items-start gap-3 border-b border-border/40 px-4 py-3 last:border-0 transition-base hover:bg-accent/40 group ${!n.isRead ? "bg-primary/5" : ""
+                        }`}
                     >
                       <span className="mt-1 text-lg">
                         {getNotificationIcon(n.type)}

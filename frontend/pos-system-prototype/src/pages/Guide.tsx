@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import userGuidePdf from "@/assets/pdf/jambo-pos-user-guide.pdf";
 
 const sections = [
   { id: "getting-started", title: "Getting started", icon: Zap },
@@ -108,7 +109,7 @@ export default function Guide() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Button asChild variant="secondary" className="gap-2">
-              <a href="/jambo-pos-user-guide.pdf" download>
+              <a href={userGuidePdf} download="jambo-pos-user-guide.pdf">
                 <Download className="h-4 w-4" /> Download PDF
               </a>
             </Button>

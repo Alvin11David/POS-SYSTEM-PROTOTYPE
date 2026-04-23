@@ -49,7 +49,7 @@ const STEPS: TourStep[] = [
     route: "/",
     selector: "[data-tour='dashboard-hero']",
     title: "Your daily overview",
-    body: "This card greets you with today's date. Click 'New Sale' anytime to jump straight into the POS.",
+    body: "This card greets you with today's date. Click 'New Product' anytime to jump straight into the POS and add a product.",
     placement: "bottom",
   },
   {

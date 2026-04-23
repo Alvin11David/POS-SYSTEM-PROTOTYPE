@@ -42,7 +42,9 @@ export function NotificationProvider({
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`${API_BASE}/api/notifications/`);
+      const res = await fetch(`${API_BASE}/api/notifications/`, {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to fetch notifications");
       const data = await res.json();
       setNotifications(data.notifications || []);
@@ -71,6 +73,7 @@ export function NotificationProvider({
         if (!isOffline) {
           const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
             method: "PUT",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body,
           });
@@ -104,6 +107,7 @@ export function NotificationProvider({
       if (!isOffline) {
         const res = await fetch(`${API_BASE}/api/notifications/${id}/`, {
           method: "DELETE",
+          credentials: "include",
         });
         if (!res.ok) throw new Error("Failed to delete notification");
       }
