@@ -110,6 +110,17 @@ def serialize_notification(notification):
     }
 
 
+def _create_notification(user, title, message, notification_type="info"):
+    """Helper to create a notification for a user."""
+    if user and user.is_authenticated:
+        Notification.objects.create(
+            user=user,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+        )
+
+
 def _parse_body(request):
     try:
         return json.loads(request.body or "{}")
@@ -181,6 +192,14 @@ def users_view(request):
         user.delete()
         return JsonResponse({"detail": "Invalid role"}, status=400)
 
+    # Create notification for user creation
+    _create_notification(
+        request.user,
+        title="Staff Added",
+        message=f"New staff member '{full_name or username}' added as {applied_role}",
+        notification_type="success",
+    )
+
     return JsonResponse({"user": serialize_user(user)}, status=201)
 
 
@@ -207,7 +226,17 @@ def user_detail_view(request, user_id):
             return JsonResponse({"detail": "Forbidden"}, status=403)
         if user.id == request.user.id:
             return JsonResponse({"detail": "You cannot remove your own account"}, status=400)
+        deleted_username = user.username
         user.delete()
+        
+        # Create notification for user deletion
+        _create_notification(
+            request.user,
+            title="Staff Removed",
+            message=f"Staff member '{deleted_username}' has been removed",
+            notification_type="info",
+        )
+        
         return JsonResponse({"ok": True})
 
     payload = _parse_body(request)
@@ -247,6 +276,22 @@ def user_detail_view(request, user_id):
             return JsonResponse({"detail": "Invalid role"}, status=400)
     else:
         user.save()
+
+    # Create notification for user update
+    update_type = "update"
+    if incoming_full_name is not None:
+        update_type = "name updated"
+    if incoming_password is not None:
+        update_type = "password changed"
+    if incoming_role is not None:
+        update_type = f"role changed to {incoming_role}"
+    
+    _create_notification(
+        request.user,
+        title="Staff Updated",
+        message=f"Staff member '{user.username}' - {update_type}",
+        notification_type="info",
+    )
 
     return JsonResponse({"user": serialize_user(user)})
 
@@ -288,6 +333,15 @@ def settings_view(request):
         setting.tax_rate = tax_rate
 
     setting.save()
+    
+    # Create notification for settings update
+    _create_notification(
+        request.user,
+        title="Settings Updated",
+        message=f"Currency set to {setting.currency}, Tax rate set to {float(setting.tax_rate)*100:.1f}%",
+        notification_type="info",
+    )
+    
     return JsonResponse({"settings": serialize_setting(setting)})
 
 
@@ -297,6 +351,9 @@ def products_view(request):
     if request.method == "GET":
         products = Product.objects.all()
         return JsonResponse({"products": [serialize_product(product) for product in products]})
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"detail": "Forbidden"}, status=403)
 
     payload = _parse_body(request)
     if payload is None:
@@ -321,19 +378,41 @@ def products_view(request):
         emoji=str(payload.get("emoji", "") or "").strip(),
         image_url=str(payload.get("imageUrl", "") or "").strip(),
     )
+    
+    # Create notification for product creation
+    _create_notification(
+        request.user,
+        title="Product Added",
+        message=f"Product '{name}' added successfully",
+        notification_type="success",
+    )
+    
     return JsonResponse({"product": serialize_product(product)}, status=201)
 
 
 @csrf_exempt
 @require_http_methods(["PUT", "DELETE"])
 def product_detail_view(request, product_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"detail": "Forbidden"}, status=403)
+
     try:
         product = Product.objects.get(pk=product_id)
     except Product.DoesNotExist:
         return JsonResponse({"detail": "Product not found"}, status=404)
 
     if request.method == "DELETE":
+        product_name = product.name
         product.delete()
+        
+        # Create notification for product deletion
+        _create_notification(
+            request.user,
+            title="Product Deleted",
+            message=f"Product '{product_name}' has been deleted",
+            notification_type="info",
+        )
+        
         return JsonResponse({"ok": True})
 
     payload = _parse_body(request)
@@ -358,6 +437,15 @@ def product_detail_view(request, product_id):
     product.emoji = str(payload.get("emoji", product.emoji) or "").strip()
     product.image_url = str(payload.get("imageUrl", product.image_url) or "").strip()
     product.save()
+    
+    # Create notification for product update
+    _create_notification(
+        request.user,
+        title="Product Updated",
+        message=f"Product '{name}' has been updated",
+        notification_type="info",
+    )
+    
     return JsonResponse({"product": serialize_product(product)})
 
 
@@ -443,6 +531,17 @@ def sales_view(request):
 
     SaleItem.objects.bulk_create(item_models)
     sale.refresh_from_db()
+    
+    # Create notification for the sale
+    if request.user.is_authenticated:
+        items_summary = ", ".join([f"{item.quantity}x {item.name}" for item in sale.items.all()])
+        _create_notification(
+            request.user,
+            title="Sale Completed",
+            message=f"Sale of {sale.items.count()} item(s) for {sale.total} completed",
+            notification_type="success",
+        )
+    
     return JsonResponse({"sale": serialize_sale(sale)}, status=201)
 
 

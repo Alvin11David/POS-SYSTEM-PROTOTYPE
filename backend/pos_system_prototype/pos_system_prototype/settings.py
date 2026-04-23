@@ -122,10 +122,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# CORS settings for Netlify frontend
-CORS_ALLOWED_ORIGINS = [
-    "https://pos-system-prototype.netlify.app",
-]
+# CORS settings
+if DEBUG:
+    # Allow all origins in development
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # Restrict to specific origins in production
+    CORS_ALLOWED_ORIGINS = [
+        "https://jambo-pos-system-prototype.netlify.app/",
+        "https://pos-system-prototype.onrender.com",
+    ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 STATIC_URL = '/static/'
