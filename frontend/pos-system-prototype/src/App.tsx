@@ -25,6 +25,9 @@ import Guide from "./pages/Guide.tsx";
 import Notifications from "./pages/Notifications.tsx";
 import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import OfflinePage from "./pages/OfflinePage.tsx";
+import { useAuth } from "@/store/authStore";
+import { useOffline } from "@/store/offlineStore";
 
 const queryClient = new QueryClient();
 const API_BASE = import.meta.env.VITE_API_URL || "";
@@ -32,6 +35,17 @@ const API_BASE = import.meta.env.VITE_API_URL || "";
 function AppRoutes() {
   const location = useLocation();
   const isLogin = location.pathname === "/login";
+  const { currentUser } = useAuth();
+  const { isOnline } = useOffline();
+
+  // Show offline page if offline and not logged in
+  if (!isOnline && !currentUser) {
+    return (
+      <Routes>
+        <Route path="*" element={<OfflinePage />} />
+      </Routes>
+    );
+  }
 
   if (isLogin) {
     return (

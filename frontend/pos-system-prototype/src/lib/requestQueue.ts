@@ -6,6 +6,7 @@ import {
   removeQueuedRequest,
   QueuedRequest,
 } from "./db";
+import { cacheResponse, getCachedResponse } from "./offlineCache";
 
 export interface SyncStatus {
   isSyncing: boolean;
@@ -94,6 +95,15 @@ export async function syncQueuedRequests(apiBase: string): Promise<void> {
           failedRequests.push(req);
         }
       } else {
+        // On success, try to cache the response if it was a GET
+        if (req.method === "GET") {
+          try {
+            const data = await response.json();
+            await cacheResponse(req.url, data);
+          } catch {
+            // Ignore caching errors
+          }
+        }
         await removeQueuedRequest(req.id);
       }
     } catch (error) {
