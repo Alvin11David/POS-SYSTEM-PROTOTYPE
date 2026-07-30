@@ -587,4 +587,4 @@ def notification_detail_view(request, notification_id):
 
     if request.method == "DELETE":
         notification.delete()
-        return JsonResponse({"detail": "Notification deleted"}, status=204)
+        return JsonResponse({"detail": "Notification deleted"})

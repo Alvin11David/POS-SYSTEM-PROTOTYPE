@@ -137,7 +137,7 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = [
-        "https://jambo-pos-system-prototype.netlify.app",
+        "https://pos-system-prototype.netlify.app",
         "https://pos-system-prototype.onrender.com",
     ]
     if railway_url:
