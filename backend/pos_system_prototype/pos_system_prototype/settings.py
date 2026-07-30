@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,11 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-htj!_(jk_s8)s^ivsheoy*cjmrab52zo_64d9rzb6gj3=f&gd$'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-htj!_(jk_s8)s^ivsheoy*cjmrab52zo_64d9rzb6gj3=f&gd$')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-import os
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
 # Allow all hosts for Render, restrict in production as needed
@@ -146,9 +146,9 @@ else:
 CORS_ALLOW_CREDENTIALS = True
 
 SESSION_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
 CSRF_TRUSTED_ORIGINS = [
     "https://pos-system-prototype.netlify.app",
     "https://pos-system-prototype.onrender.com",
