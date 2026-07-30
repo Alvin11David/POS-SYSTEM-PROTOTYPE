@@ -28,7 +28,7 @@ import os
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
 # Allow all hosts for Render, restrict in production as needed
-ALLOWED_HOSTS = [".onrender.com", "localhost", "127.0.0.1", "testserver"]
+ALLOWED_HOSTS = [".onrender.com", "localhost", "127.0.0.1", "testserver", ".railway.app"]
 
 
 # Application definition
@@ -79,12 +79,20 @@ WSGI_APPLICATION = 'pos_system_prototype.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+import dj_database_url
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -122,16 +130,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+railway_url = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+
 # CORS settings
 if DEBUG:
-    # Allow all origins in development
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    # Restrict to specific origins in production
     CORS_ALLOWED_ORIGINS = [
-        "https://jambo-pos-system-prototype.netlify.app/",
+        "https://jambo-pos-system-prototype.netlify.app",
         "https://pos-system-prototype.onrender.com",
     ]
+    if railway_url:
+        CORS_ALLOWED_ORIGINS.append(f"https://{railway_url}")
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -143,6 +153,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://pos-system-prototype.netlify.app",
     "https://pos-system-prototype.onrender.com",
 ]
+if railway_url:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_url}")
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
